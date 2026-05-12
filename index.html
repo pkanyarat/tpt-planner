@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>TPT Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   TPT PLANNER — Modern Bright Edition
+   Clean, vibrant, soft shadows, no glass blur
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* SURFACES */
+  --bg: #FBFAFE;
+  --bg-2: #F4F1FB;
+  --surface: #FFFFFF;
+  --surface-2: #FAF8FF;
+  --border: #ECE7F5;
+  --border-soft: #F4F0FA;
+  --border-strong: #DDD5EB;
+  
+  /* TEXT */
+  --text: #1A1530;
+  --text-2: #4E4565;
+  --text-3: #8A82A0;
+  --text-mute: #B8B0CC;
+  
+  /* BRAND */
+  --primary: #7C5CFF;
+  --primary-2: #6B47FF;
+  --primary-bg: #F1EDFF;
+  --primary-bg-2: #E8E0FF;
+  --primary-b: #D4C5FF;
+  
+  /* ACCENT */
+  --pink: #FF4C8A;
+  --pink-bg: #FFE9F1;
+  --pink-b: #FFC2D7;
+  
+  --coral: #FF6B5A;
+  --coral-bg: #FFEDEA;
+  --coral-b: #FFC8BF;
+  
+  --orange: #FF9F2C;
+  --orange-bg: #FFF1DF;
+  --orange-b: #FFDAA5;
+  
+  --yellow: #FFC93C;
+  --yellow-bg: #FFF7DC;
+  
+  --teal: #0FBFA1;
+  --teal-bg: #DEF8F1;
+  --teal-b: #95E1CD;
+  
+  --green: #1ECB68;
+  --green-bg: #DEF8E8;
+  --green-b: #95E1B5;
+  
+  --sky: #3D9DFF;
+  --sky-bg: #E1F0FF;
+  --sky-b: #A5CDFF;
+  
+  --red: #EF4444;
+  --red-bg: #FEE9E9;
+  --red-b: #FCB8B8;
+  
+  /* SHADOWS */
+  --sh-xs: 0 1px 2px rgba(31,18,77,.04);
+  --sh-sm: 0 2px 8px rgba(31,18,77,.06), 0 1px 2px rgba(31,18,77,.04);
+  --sh-md: 0 8px 24px rgba(31,18,77,.08), 0 2px 6px rgba(31,18,77,.04);
+  --sh-lg: 0 16px 40px rgba(31,18,77,.12), 0 4px 12px rgba(31,18,77,.06);
+  --sh-glow-primary: 0 6px 20px rgba(124,92,255,.35);
+  --sh-glow-pink: 0 6px 20px rgba(255,76,138,.3);
+  
+  /* RADIUS */
+  --r-sm: 8px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 20px;
+  --r-2xl: 24px;
+  --r-full: 999px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  background: var(--bg);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ TOPBAR ═══ */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 64px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.tb-brand { display: flex; align-items: center; gap: 12px; flex: 1; }
+.tb-logo {
+  width: 40px; height: 40px;
+  background: #6366F1;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 19px;
+  box-shadow: 0 8px 20px rgba(124,92,255,.35);
+}
+.tb-title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.025em;
+  color: var(--text);
+}
+.tb-nav {
+  display: flex; gap: 2px;
+  background: var(--bg-2);
+  padding: 4px;
+  border-radius: 14px;
+}
+.tnav {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  cursor: pointer; border: none;
+  background: transparent;
+  color: var(--text-3);
+  transition: all .2s;
+  font-family: inherit;
+}
+.tnav.active {
+  background: #EEF2FF;
+  color: #4F46E5;
+  border: 1px solid #DDE3FF;
+  box-shadow: none;
+}
+.tnav:hover:not(.active) {
+  color: var(--text);
+  background: rgba(255,255,255,.6);
+}
+
+/* ═══ DRIVE BAR ═══ */
+.drive-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px;
+  background: #F0FDFA;
+  border-bottom: 1px solid var(--teal-b);
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 600;
+}
+.drive-bar.warn { background: #FFF7ED; border-color: var(--orange-b); color: var(--orange); }
+.drive-bar.hidden { display: none; }
+.drive-avatar { width: 26px; height: 26px; border-radius: 50%; object-fit: cover; }
+.drive-status { flex: 1; }
+.drive-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--teal);
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 4px rgba(15,191,161,.2);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 4px rgba(15,191,161,.2); }
+  50% { box-shadow: 0 0 0 8px rgba(15,191,161,.05); }
+}
+.drive-dot.warn { background: var(--orange); }
+.btn.drive { background: #fff; border-color: var(--teal-b); color: var(--teal); gap: 5px; }
+.btn.drive:hover { background: #F0FDFA; }
+
+/* ═══ PAGES ═══ */
+.page { display: none; max-width: 1000px; margin: 0 auto; padding: 2rem 1.25rem; }
+.page.active { display: block; }
+
+/* ═══ BANNERS ═══ */
+.banner {
+  border-radius: var(--r-xl);
+  padding: 1.1rem 1.4rem;
+  margin-bottom: 1.1rem;
+  border: 1px solid;
+  animation: slideDown .4s cubic-bezier(.16,1,.3,1);
+  box-shadow: var(--sh-sm);
+}
+.banner.hidden { display: none; }
+.banner.urgent {
+  background: linear-gradient(135deg, #FFF1F4 0%, #FFE3EB 100%);
+  border-color: var(--pink-b);
+}
+.banner.warn {
+  background: linear-gradient(135deg, #FFF6E6 0%, #FFECCB 100%);
+  border-color: var(--orange-b);
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.ban-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.ban-icon {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  color: #fff;
+}
+.urgent .ban-icon { background: linear-gradient(135deg, var(--pink), var(--coral)); box-shadow: 0 2px 8px rgba(99,102,241,.10); }
+.warn .ban-icon { background: linear-gradient(135deg, var(--orange), var(--yellow)); box-shadow: 0 6px 16px rgba(255,159,44,.4); }
+.ban-title { font-size: 14px; font-weight: 700; }
+.urgent .ban-title { color: var(--pink); }
+.warn .ban-title { color: var(--orange); }
+.ban-items { display: flex; flex-direction: column; gap: 5px; }
+.ban-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+  background: rgba(255,255,255,.65);
+  border: 1px solid transparent;
+}
+.ban-item:hover { background: #fff; border-color: var(--border); transform: translateX(3px); }
+.ban-name { font-weight: 700; }
+.urgent .ban-name { color: var(--pink); }
+.warn .ban-name { color: var(--orange); }
+.ban-sub { font-size: 11px; color: var(--text-3); font-weight: 500; margin-top: 2px; }
+
+/* ═══ STATS ═══ */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 1.25rem 1.35rem;
+  position: relative;
+  overflow: hidden;
+  transition: all .3s cubic-bezier(.16,1,.3,1);
+  box-shadow: var(--sh-xs);
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--sh-md);
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  opacity: .12;
+}
+.stat-card.pink::before { background: var(--pink); }
+.stat-card.amber::before { background: var(--orange); }
+.stat-card.teal::before { background: var(--teal); }
+.stat-card.green::before { background: var(--primary); }
+.stat-emo { font-size: 22px; margin-bottom: 8px; position: relative; }
+.stat-num {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 4px;
+  letter-spacing: -.025em;
+  position: relative;
+}
+.stat-card.pink .stat-num { color: var(--pink); }
+.stat-card.amber .stat-num { color: var(--orange); }
+.stat-card.teal .stat-num { color: var(--teal); }
+.stat-card.green .stat-num { color: var(--primary); }
+.stat-label { font-size: 12px; color: var(--text-3); font-weight: 600; position: relative; }
+
+/* ═══ SECTION HEADER ═══ */
+.sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.sec-title { font-size: 19px; font-weight: 700; letter-spacing: -.02em; }
+
+/* ═══ UPCOMING CARDS ═══ */
+.upcoming-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 12px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  cursor: pointer;
+  transition: all .25s cubic-bezier(.16,1,.3,1);
+  box-shadow: var(--sh-xs);
+}
+.upcoming-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary-b);
+  box-shadow: var(--sh-md);
+}
+.uc-name { font-size: 16px; font-weight: 700; margin-bottom: 4px; letter-spacing: -.015em; }
+.uc-meta { font-size: 12px; color: var(--text-3); margin-bottom: 10px; font-weight: 500; }
+.uc-phases { display: flex; flex-wrap: wrap; gap: 6px; }
+.pc {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .01em;
+}
+.pc.creating { background: #FFF7ED; color: var(--orange); }
+.pc.listing { background: #F0FDFA; color: var(--teal); }
+.pc.promoting { background: #F5F7FF; color: var(--primary); }
+.pc.upcoming { background: var(--sky-bg); color: var(--sky); }
+.pc.past { background: var(--border); color: var(--text-3); }
+.pc.info { background: var(--bg-2); color: var(--text-3); font-weight: 500; }
+
+.days-badge {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 10px;
+  white-space: nowrap;
+  letter-spacing: -.01em;
+}
+.days-badge.urgent {
+  background: linear-gradient(135deg, var(--pink), var(--coral));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99,102,241,.10);
+}
+.days-badge.soon {
+  background: linear-gradient(135deg, var(--orange), var(--yellow));
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(255,159,44,.4);
+}
+.days-badge.ok { background: #F0FDFA; color: var(--teal); border: 1px solid var(--teal-b); }
+.days-badge.past { background: var(--bg-2); color: var(--text-3); border: 1px solid var(--border); }
+
+.phase-bar { display: flex; gap: 4px; margin-top: 10px; }
+.phase-seg { height: 5px; flex: 1; border-radius: var(--r-full); background: var(--border); }
+.phase-seg.active { background: linear-gradient(90deg, var(--pink), var(--primary)); }
+.phase-seg.done-seg { background: var(--teal); }
+.task-summary { font-size: 11px; color: var(--text-3); margin-top: 6px; font-weight: 500; }
+.task-summary span { font-weight: 700; color: var(--teal); }
+
+/* ═══ DETAIL HEADER ═══ */
+#event-detail-page { display: none; max-width: 1000px; margin: 0 auto; padding: 2rem 1.25rem; }
+#event-detail-page.active { display: block; }
+
+.detail-header {
+  background: linear-gradient(135deg, #FFF 0%, #F5F7FF 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  padding: 1.6rem 1.85rem;
+  margin-bottom: 1.1rem;
+  box-shadow: var(--sh-md);
+  position: relative;
+  overflow: hidden;
+}
+.detail-header::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 200px; height: 200px;
+  background: #6366F1;
+  border-radius: 50%;
+  opacity: .08;
+}
+.detail-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-2);
+  cursor: pointer;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 7px 14px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-weight: 600;
+  transition: all .2s;
+  position: relative;
+}
+.detail-back:hover { color: var(--primary); border-color: var(--primary-b); }
+.detail-name {
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -.025em;
+  position: relative;
+}
+.detail-meta { font-size: 13px; color: var(--text-2); font-weight: 500; position: relative; }
+
+.tl-visual { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 16px; position: relative; }
+.tl-box {
+  padding: 14px 16px;
+  border-radius: var(--r-lg);
+  transition: transform .2s;
+}
+.tl-box:hover { transform: translateY(-2px); }
+.tl-box.start { background: linear-gradient(135deg, #FFF7ED, #FFE5C2); border: 1px solid var(--orange-b); }
+.tl-box.listing { background: linear-gradient(135deg, #F0FDFA, #C5F2E3); border: 1px solid var(--teal-b); }
+.tl-box.promo { background: linear-gradient(135deg, #F5F7FF, #EEF2FF); border: 1px solid var(--primary-b); }
+.tl-box-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+.tl-box.start .tl-box-label { color: var(--orange); }
+.tl-box.listing .tl-box-label { color: var(--teal); }
+.tl-box.promo .tl-box-label { color: var(--primary); }
+.tl-box-date { font-size: 13px; font-weight: 700; color: var(--text); }
+
+/* ═══ YEAR TABS ═══ */
+.year-tabs { display: flex; gap: 8px; margin-bottom: 1.1rem; flex-wrap: wrap; }
+.year-tab {
+  padding: 10px 22px;
+  border-radius: var(--r-md);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-2);
+  transition: all .2s;
+  font-family: inherit;
+}
+.year-tab.active {
+  background: #6366F1;
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99,102,241,.12);
+}
+.year-tab:hover:not(.active) {
+  border-color: var(--primary-b);
+  color: var(--primary);
+  background: #F5F7FF;
+}
+.year-tab.add-year { border-style: dashed; color: var(--text-3); }
+.year-tab.add-year:hover { color: var(--primary); border-color: var(--primary); background: #F5F7FF; }
+
+/* ═══ TASKS / NOTES / FILES CARDS ═══ */
+.tasks-card, .notes-card, .files-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  padding: 1.5rem;
+  margin-bottom: 1.1rem;
+  box-shadow: var(--sh-xs);
+}
+
+.tasks-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.1rem; }
+.tasks-title { font-size: 16px; font-weight: 700; letter-spacing: -.015em; }
+.task-progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.task-prog-track { flex: 1; height: 10px; background: var(--bg-2); border-radius: var(--r-full); overflow: hidden; }
+.task-prog-fill {
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: width .4s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 0 12px rgba(15,191,161,.5);
+}
+
+.task-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 13px 16px;
+  border-radius: var(--r-lg);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+  transition: all .2s;
+  background: var(--surface);
+}
+.task-item:hover { box-shadow: var(--sh-sm); border-color: var(--primary-b); transform: translateX(2px); }
+.task-item.complete { border-color: var(--green-b); background: var(--green-bg); }
+.task-item.inprogress { border-color: var(--orange-b); background: #FFF7ED; }
+.task-status-dot {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2.5px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all .2s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700;
+}
+.task-item.complete .task-status-dot { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 4px 10px rgba(30,203,104,.4); }
+.task-item.inprogress .task-status-dot { background: var(--orange); border-color: var(--orange); color: #fff; box-shadow: 0 4px 10px rgba(255,159,44,.4); }
+.task-name { flex: 1; font-size: 14px; font-weight: 600; }
+.task-item.complete .task-name { text-decoration: line-through; color: var(--text-3); }
+.task-status-select {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: inherit;
+  background: var(--surface);
+  cursor: pointer; color: var(--text);
+  font-weight: 600;
+}
+.task-del-btn {
+  border: none; background: none;
+  cursor: pointer;
+  color: var(--text-3);
+  font-size: 14px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all .15s;
+}
+.task-del-btn:hover { color: var(--red); background: var(--red-bg); }
+
+.task-add-row { display: flex; gap: 10px; margin-top: 12px; }
+.task-add-row input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-2);
+  color: var(--text);
+  transition: all .2s;
+  font-weight: 500;
+}
+.task-add-row input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  border-style: solid;
+  box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+}
+
+.notes-card textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg-2);
+  color: var(--text);
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.6;
+  transition: all .2s;
+  font-weight: 500;
+}
+.notes-card textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+}
+
+.file-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--bg-2);
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  margin-bottom: 6px;
+  transition: all .2s;
+}
+.file-item:hover { border-color: var(--primary-b); background: var(--surface); }
+.file-left { display: flex; align-items: center; gap: 12px; }
+.file-ico { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.fi-pdf { background: var(--red-bg); }
+.fi-doc { background: var(--sky-bg); }
+.fi-img { background: #F0FDFA; }
+.fi-other { background: var(--bg-2); border: 1px solid var(--border); }
+.file-name { font-size: 14px; font-weight: 600; }
+.file-note { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+
+/* ═══ FORM ═══ */
+.form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  padding: 1.85rem;
+  margin-bottom: 1.1rem;
+  box-shadow: var(--sh-xs);
+}
+.form-sec {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--primary);
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #F5F7FF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+.form-row.s1 { grid-template-columns: 1fr; }
+.form-row.s3 { grid-template-columns: 1fr 1fr 1fr; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  color: var(--text);
+  font-size: 14px;
+  font-family: inherit;
+  transition: all .2s;
+  font-weight: 500;
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+}
+.ws-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.ws-chip {
+  padding: 9px 18px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  cursor: pointer;
+  background: var(--surface);
+  color: var(--text-2);
+  transition: all .2s;
+  user-select: none;
+  font-family: inherit;
+  font-weight: 600;
+}
+.ws-chip:hover { border-color: var(--primary); color: var(--primary); background: #F5F7FF; }
+.ws-chip.selected {
+  background: #6366F1;
+  border-color: transparent;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99,102,241,.12);
+}
+
+/* ═══ SETTINGS / MASTER ═══ */
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.settings-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2xl);
+  padding: 1.6rem;
+  box-shadow: var(--sh-xs);
+}
+.settings-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; letter-spacing: -.015em; }
+.settings-card .desc { font-size: 13px; color: var(--text-3); margin-bottom: 20px; line-height: 1.5; }
+.setting-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.setting-row:last-child { border-bottom: none; }
+.setting-label { font-size: 13px; font-weight: 600; }
+.setting-sub { font-size: 11px; color: var(--text-3); margin-top: 3px; }
+.setting-input {
+  padding: 9px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--bg-2);
+  color: var(--text);
+  width: 80px;
+  text-align: center;
+  font-weight: 700;
+}
+.setting-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(124,92,255,.12);
+}
+
+/* ═══ BUTTONS ═══ */
+.btn {
+  padding: 11px 22px;
+  border-radius: var(--r-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  transition: all .2s;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--sh-xs);
+}
+.btn:hover { transform: translateY(-1px); border-color: var(--primary-b); box-shadow: var(--sh-sm); }
+.btn.primary {
+  background: #6366F1;
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99,102,241,.12);
+}
+.btn.primary:hover { box-shadow: 0 10px 28px rgba(124,92,255,.45); }
+.btn.teal { background: #F0FDFA; border-color: var(--teal-b); color: var(--teal); }
+.btn.teal:hover { background: #C5F2E3; }
+.btn.ghost { color: var(--text-2); background: var(--bg-2); }
+.btn.ghost:hover { color: var(--red); border-color: var(--red-b); background: var(--red-bg); }
+.btn.sm { padding: 8px 16px; font-size: 12px; }
+.btn.xs { padding: 5px 12px; font-size: 11px; border-radius: 8px; }
+.btn.icon-btn { padding: 9px; }
+.btn-row { display: flex; gap: 10px; margin-top: 1.2rem; flex-wrap: wrap; }
+.status-sel {
+  padding: 8px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 12px;
+  background: var(--surface);
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* ═══ MODAL ═══ */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(26,21,48,.6);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn .25s;
+}
+.overlay.hidden { display: none; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--surface);
+  border-radius: var(--r-2xl);
+  padding: 2rem;
+  max-width: 540px; width: 93%;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--sh-lg);
+  animation: scaleIn .3s cubic-bezier(.16,1,.3,1);
+}
+@keyframes scaleIn { from { opacity: 0; transform: scale(.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; }
+.modal-title { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+
+/* ═══ EMPTY ═══ */
+.empty { text-align: center; padding: 5rem 1rem; color: var(--text-3); }
+.empty-ico { font-size: 56px; margin-bottom: 14px; opacity: .8; }
+
+/* ═══ TOGGLE ═══ */
+.toggle { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute; inset: 0;
+  background: var(--border-strong);
+  border-radius: 28px;
+  cursor: pointer;
+  transition: .25s;
+}
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 22px; height: 22px;
+  left: 3px; bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: .25s cubic-bezier(.16,1,.3,1);
+  box-shadow: 0 2px 6px rgba(0,0,0,.2);
+}
+.toggle input:checked + .toggle-slider { background: #6366F1; }
+.toggle input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+
+.priority-badge{
+  padding:5px 12px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.priority-core{background:#F4EDFF;color:#6D5DFB;}
+.priority-high{background:#FFF1E6;color:#F08C2E;}
+.priority-optional{background:#EAF8EF;color:#2E9E5B;}
+.priority-archive{background:#F2F4F7;color:#667085;}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .form-row.s3 { grid-template-columns: 1fr; }
+  .tl-visual { grid-template-columns: 1fr; }
+  .settings-grid { grid-template-columns: 1fr; }
+  .tb-title { display: none; }
+  .topbar { padding: 0 1rem; gap: .5rem; }
+  .tnav { padding: 7px 11px; font-size: 12px; }
+  .page { padding: 1.25rem 1rem; }
+  .detail-name { font-size: 22px; }
+}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+<!-- DRIVE STATUS BAR -->
+<div id="drive-bar" class="drive-bar hidden">
+  <span class="drive-dot" id="drive-dot"></span>
+  <span class="drive-status" id="drive-status-text"></span>
+  <img id="drive-avatar" class="drive-avatar" style="display:none"/>
+  <button class="btn sm drive" id="drive-save-btn" onclick="driveSave()" style="display:none">☁️ บันทึกขึ้น Drive</button>
+  <button class="btn sm drive" id="drive-load-btn" onclick="driveLoad()" style="display:none">📥 โหลดจาก Drive</button>
+  <button class="btn sm ghost" onclick="driveSignOut()" id="drive-signout-btn" style="display:none;font-size:11px;">ออกจากระบบ</button>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">📚</div>
+    <span class="tb-title">TPT Planner</span>
+  </div>
+  <div class="tb-nav">
+    <button class="tnav active" onclick="nav('dashboard')">📊 Dashboard</button>
+    <button class="tnav" onclick="nav('events')">📋 Events</button>
+    <button class="tnav" onclick="nav('add')">➕ เพิ่ม</button>
+    <button class="tnav" onclick="nav('master')">🗂 ข้อมูลหลัก</button>
+    <button class="tnav" onclick="nav('settings')">⚙️ ตั้งค่า</button>
+  </div>
+  <button id="drive-connect-btn" class="btn sm drive" onclick="driveSignIn()" title="เชื่อมต่อ Google Drive เพื่อ sync ข้อมูล">☁️ เชื่อม Drive</button>
+  <button class="btn teal sm" onclick="exportJSON()" title="บันทึกข้อมูลทั้งหมดเป็น JSON">💾 Backup</button>
+  <button class="btn sm" onclick="triggerImport()" title="โหลดข้อมูลจากไฟล์ JSON">📂 Restore</button>
+  <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importJSON(event)"/>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="page-dashboard" class="page active">
+  <div id="b-urgent" class="banner urgent hidden">
+    <div class="ban-head"><div class="ban-icon">🚨</div><div class="ban-title">ต้องดำเนินการเร่งด่วน!</div></div>
+    <div class="ban-items" id="bl-urgent"></div>
+  </div>
+  <div id="b-warn" class="banner warn hidden">
+    <div class="ban-head"><div class="ban-icon">⏰</div><div class="ban-title">กำลังใกล้ถึงกำหนด — ควรเริ่มเตรียม</div></div>
+    <div class="ban-items" id="bl-warn"></div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card pink"><div class="stat-emo">📆</div><div class="stat-num" id="s-events">0</div><div class="stat-label">Events ทั้งหมด</div></div>
+    <div class="stat-card amber"><div class="stat-emo">📅</div><div class="stat-num" id="s-upcoming">0</div><div class="stat-label">upcoming ปีนี้</div></div>
+    <div class="stat-card teal"><div class="stat-emo">✅</div><div class="stat-num" id="s-tasks">0</div><div class="stat-label">Tasks สำเร็จ</div></div>
+    <div class="stat-card green"><div class="stat-emo">🎯</div><div class="stat-num" id="s-pct">0%</div><div class="stat-label">อัตราสำเร็จ</div></div>
+  </div>
+
+  <div class="sec-head">
+    <div class="sec-title">📅 Upcoming Events ปีนี้</div>
+  </div>
+  <div id="dash-list"></div>
+</div>
+
+<!-- ═══ EVENTS LIST ═══ -->
+<div id="page-events" class="page">
+  <div style="display:flex;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;align-items:center;">
+    <input type="text" id="ev-search" placeholder="🔍 ค้นหา..." oninput="renderEventsList()"
+      style="flex:1;min-width:160px;padding:8px 12px;border:1px solid var(--border);border-radius:9px;font-size:13px;font-family:inherit;background:var(--surface);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);">
+    <button class="btn primary sm" onclick="nav('add')">➕ เพิ่ม Event</button>
+  </div>
+  <div id="events-list"></div>
+</div>
+
+<!-- ═══ EVENT DETAIL ═══ -->
+<div id="event-detail-page">
+  <div class="detail-header">
+    <button class="detail-back" onclick="closeDetail()">← กลับ</button>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+      <div>
+        <div class="detail-name" id="det-name"></div>
+        <div class="detail-meta" id="det-meta"></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn sm" id="det-edit-btn">✏️ แก้ไข Event</button>
+        <button class="btn sm ghost" id="det-del-btn">🗑 ลบ</button>
+      </div>
+    </div>
+    <div id="det-tags-row" style="margin-top:12px;"></div>
+    <div class="tl-visual" id="det-timeline"></div>
+  </div>
+
+  <div id="det-insights-box"></div>
+
+  <div class="sec-head">
+    <div class="sec-title">🗂 งานรายปี</div>
+  </div>
+  <div class="year-tabs" id="year-tabs"></div>
+  <div id="year-panels"></div>
+</div>
+
+<!-- ═══ ADD/EDIT EVENT ═══ -->
+<div id="page-add" class="page">
+  <div class="form-card">
+    <div class="form-sec">ข้อมูล Event</div>
+    <div class="form-row">
+      <div class="field"><label>Event Name *</label><input type="text" id="f-name" placeholder="เช่น Mother's Day"/></div>
+      <div class="field">
+        <label>วันที่ในปีนี้ (DD-MM) *</label>
+        <input type="text" id="f-monthday" placeholder="เช่น 12-05 (12 พ.ค.)"/>
+      </div>
+    </div>
+    <div class="form-row s3">
+      <div class="field">
+        <label>Audience</label>
+        <select id="f-audience">
+          <option value="">เลือก grade</option>
+          <option>Pre-K / Kindergarten</option><option>Grade 1–2</option>
+          <option>Grade 1–3</option><option>Grade 3–5</option>
+          <option>Grade 4–6</option><option>Middle School</option><option>High School</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Difficulty</label>
+        <select id="f-difficulty">
+          <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Keywords</label>
+        <input type="text" id="f-keywords" placeholder="เช่น flowers, love"/>
+      </div>
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label style="margin-bottom:10px;display:block;">Worksheet Types</label>
+      <div class="ws-grid" id="ws-chips"></div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px;">
+      <label style="margin-bottom:10px;display:block;">⭐ Event Priority</label>
+      <div class="ws-grid" id="priority-chips"></div>
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label style="margin-bottom:10px;display:block;">🔑 Tag หลัก</label>
+      <div class="ws-grid" id="tag-primary-chips"></div>
+    </div>
+    <div class="field" style="margin-bottom:14px;">
+      <label style="margin-bottom:10px;display:block;">➕ Tag เสริม</label>
+      <div class="ws-grid" id="tag-secondary-chips"></div>
+    </div>
+
+    <div class="field" style="margin-bottom:14px;">
+      <label>📦 Existing Products</label>
+      <input type="text" id="f-existing-products" placeholder="เช่น Word Search, Bingo, Coloring"/>
+    </div>
+
+
+    <div class="form-row s1">
+      <div class="field">
+        <label>📈 Previous Year Insights</label>
+        <textarea id="f-insights" placeholder="เช่น ปีที่แล้วทำ Word Search อย่างเดียว / Cover สีเข้ม CTR ไม่ดี / ปีนี้ควรเพิ่ม Coloring"></textarea>
+      </div>
+    </div>
+
+    <div class="form-row s1">
+      <div class="field"><label>Notes</label><textarea id="f-notes" placeholder="จดไอเดีย..."></textarea></div>
+    </div>
+  </div>
+  <div class="btn-row">
+    <button class="btn primary" id="save-btn" onclick="saveEvent()">💾 บันทึก</button>
+    <button class="btn ghost" onclick="resetForm()">Reset</button>
+  </div>
+</div>
+
+<!-- ═══ MASTER DATA ═══ -->
+<div id="page-master" class="page">
+  <div class="sec-title" style="margin-bottom:1.1rem;">🗂 ข้อมูลหลัก (Master Data)</div>
+
+  <div style="background:#F5F7FF;border:1px solid var(--primary-b);border-radius:14px;padding:12px 16px;margin-bottom:1.25rem;font-size:13px;color:var(--primary);line-height:1.6;">
+    💡 จัดการข้อมูลที่ใช้ซ้ำในระบบ — เพิ่ม/ลบได้ตามต้องการ
+  </div>
+
+  <div class="settings-grid">
+
+    <!-- Worksheet Types -->
+    <div class="settings-card" style="grid-column:1/-1;">
+      <h3>📝 Worksheet Types</h3>
+      <p class="desc">ประเภทใบงานที่จะให้เลือกตอนสร้าง event</p>
+      <div id="master-ws-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="master-ws-input" placeholder="เช่น Word Search" onkeydown="if(event.key==='Enter')addMasterWs()"
+          style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.4);"/>
+        <button class="btn primary sm" onclick="addMasterWs()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+
+    <!-- Event Priority -->
+    <div class="settings-card" style="grid-column:1/-1;">
+      <h3>⭐ Event Priority</h3>
+      <p class="desc">ระดับความสำคัญของ Event ใช้ช่วยแยก Event หลัก / Event ทดลอง / Event ที่เก็บไว้ดูย้อนหลัง</p>
+      <div id="master-priority-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="master-priority-input" placeholder="เช่น Main Event หรือ Trial Event" onkeydown="if(event.key==='Enter')addMasterPriority()"
+          style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.4);"/>
+        <button class="btn primary sm" onclick="addMasterPriority()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+    <!-- Primary Tags -->
+    <div class="settings-card">
+      <h3>🔑 Tag หลัก</h3>
+      <p class="desc">Tag สำคัญ ใช้เป็นคีย์หลักของ event เช่น ฮาโลวีน, คริสมาส</p>
+      <div id="master-tag-primary-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="master-tag-primary-input" placeholder="เช่น ฮาโลวีน" onkeydown="if(event.key==='Enter')addMasterTagPrimary()"
+          style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.4);"/>
+        <button class="btn primary sm" onclick="addMasterTagPrimary()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+    <!-- Secondary Tags -->
+    <div class="settings-card">
+      <h3>➕ Tag เสริม</h3>
+      <p class="desc">Tag ย่อย ใช้เสริมข้อมูล เช่น ฤดูใบไม้ร่วง, ปาร์ตี้, น่ารัก</p>
+      <div id="master-tag-secondary-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
+      <div style="display:flex;gap:8px;">
+        <input type="text" id="master-tag-secondary-input" placeholder="เช่น น่ารัก" onkeydown="if(event.key==='Enter')addMasterTagSecondary()"
+          style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.4);"/>
+        <button class="btn primary sm" onclick="addMasterTagSecondary()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ SETTINGS ═══ -->
+<div id="page-settings" class="page">
+  <div class="sec-title" style="margin-bottom:1rem;">⚙️ ตั้งค่า</div>
+  <div class="settings-grid">
+
+    <!-- Timeline -->
+    <div class="settings-card">
+      <h3>📅 Timeline การทำงาน</h3>
+      <p class="desc">กำหนดว่าแต่ละ phase เริ่มกี่วันก่อน event</p>
+      <div class="setting-row">
+        <div><div class="setting-label">เริ่มสร้างงาน</div><div class="setting-sub">วันก่อน event ที่ควรเริ่ม</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-tl-start" min="7" max="90" value="30"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">เริ่ม Listing</div><div class="setting-sub">วันก่อน event ที่ควร list</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-tl-list-from" min="5" max="60" value="25"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">สิ้นสุด Listing</div><div class="setting-sub">วันก่อน event ที่หยุด list</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-tl-list-to" min="1" max="30" value="15"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">เริ่มโปรโมท</div><div class="setting-sub">วันก่อน event ที่ควรโปรโมท</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-tl-promo-from" min="1" max="30" value="14"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn primary sm" onclick="saveSettings()">💾 บันทึก Timeline</button>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="settings-card">
+      <h3>🔔 การแจ้งเตือน</h3>
+      <p class="desc">แจ้งเตือนที่หน้า Dashboard เมื่อ event ใกล้ถึง</p>
+      <div class="setting-row">
+        <div><div class="setting-label">แจ้งเตือนเร่งด่วน (สีแดง)</div><div class="setting-sub">เหลือน้อยกว่ากี่วัน</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-notif-urgent" min="1" max="30" value="7"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">แจ้งเตือนล่วงหน้า (สีเหลือง)</div><div class="setting-sub">เหลือน้อยกว่ากี่วัน</div></div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <input class="setting-input" type="number" id="s-notif-warn" min="1" max="60" value="21"/>
+          <span style="font-size:12px;color:var(--text-3);">วัน</span>
+        </div>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">แสดงแจ้งเตือนเร่งด่วน</div></div>
+        <label class="toggle"><input type="checkbox" id="s-show-urgent" checked/><span class="toggle-slider"></span></label>
+      </div>
+      <div class="setting-row">
+        <div><div class="setting-label">แสดงแจ้งเตือนล่วงหน้า</div></div>
+        <label class="toggle"><input type="checkbox" id="s-show-warn" checked/><span class="toggle-slider"></span></label>
+      </div>
+      <div style="margin-top:12px;">
+        <button class="btn primary sm" onclick="saveSettings()">💾 บันทึก การแจ้งเตือน</button>
+      </div>
+    </div>
+
+    <!-- Data management -->
+    <div class="settings-card" style="grid-column:1/-1;">
+      <h3>☁️ Google Drive Sync</h3>
+      <p class="desc">เชื่อมต่อ Google Drive เพื่อ sync ข้อมูลข้ามเครื่องได้ในคลิกเดียว</p>
+
+      <div style="background:#F5F7FF;border:1px solid var(--primary-b);border-radius:10px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:600;color:var(--primary);margin-bottom:10px;">🔧 ขั้นตอนตั้งค่าครั้งแรก (ทำแค่ครั้งเดียว ~5 นาที)</div>
+        <div style="font-size:12px;color:var(--primary);line-height:2;">
+          1. ไปที่ <a href="https://console.cloud.google.com/" target="_blank" style="color:var(--primary);font-weight:600;">console.cloud.google.com</a><br/>
+          2. สร้าง Project ใหม่ → ตั้งชื่อ "TPT Planner"<br/>
+          3. ไปที่ <strong>APIs &amp; Services → Library</strong> → เปิด <strong>Google Drive API</strong><br/>
+          4. ไปที่ <strong>OAuth consent screen</strong> → เลือก External → กรอกชื่อแอป → บันทึก<br/>
+          5. ไปที่ <strong>Credentials → Create Credentials → OAuth Client ID</strong><br/>
+          6. Application type: <strong>Web application</strong> → Authorized origins: <code style="background:rgba(81,71,190,.1);padding:1px 6px;border-radius:4px;">file://</code> และ <code style="background:rgba(81,71,190,.1);padding:1px 6px;border-radius:4px;">http://localhost</code><br/>
+          7. Copy <strong>Client ID</strong> ที่ได้ → วางในช่องด้านล่าง
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:14px;">
+        <label>Google OAuth Client ID</label>
+        <input type="text" id="s-client-id" placeholder="xxxxxxxxxxxx-xxxxxxxx.apps.googleusercontent.com"
+          style="font-size:12px;font-family:monospace;"/>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+        <button class="btn primary" onclick="saveClientId()">💾 บันทึก Client ID</button>
+        <button class="btn drive" onclick="driveSignIn()" id="settings-drive-btn">☁️ เชื่อมต่อ Google Drive</button>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--border-soft);margin:16px 0;"/>
+      <h3 style="margin-bottom:4px;">💾 จัดการข้อมูล</h3>
+      <p class="desc" style="margin-bottom:12px;">Backup/Restore แบบ manual หรือ Export CSV</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn teal" onclick="exportJSON()">💾 Backup JSON</button>
+        <button class="btn" onclick="triggerImport()">📂 Restore JSON</button>
+        <button class="btn" onclick="exportCSV()">⬇ Export CSV</button>
+        <button class="btn ghost" onclick="confirmReset()">🗑 ล้างข้อมูลทั้งหมด</button>
+      </div>
+      <div id="import-status" style="margin-top:10px;font-size:13px;display:none;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD FILE MODAL ══ -->
+<div id="file-modal" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-head"><div class="modal-title">📁 บันทึกไฟล์</div><button class="btn icon-btn ghost" onclick="closeFileMod()">✕</button></div>
+    <div class="field" style="margin-bottom:12px;"><label>ชื่อไฟล์ *</label><input type="text" id="fm-name" placeholder="เช่น wordsearch-v2.pdf"/></div>
+    <div class="form-row">
+      <div class="field"><label>ประเภท</label>
+        <select id="fm-type"><option value="pdf">📄 PDF</option><option value="doc">📝 Doc</option><option value="img">🖼 รูป</option><option value="other">📎 อื่นๆ</option></select>
+      </div>
+      <div class="field"><label>Link (ถ้ามี)</label><input type="text" id="fm-link" placeholder="https://..."/></div>
+    </div>
+    <div class="field" style="margin-bottom:16px;"><label>หมายเหตุ</label><input type="text" id="fm-note" placeholder="เช่น ไฟล์ final"/></div>
+    <div class="btn-row">
+      <button class="btn primary" onclick="saveFile()">💾 บันทึก</button>
+      <button class="btn ghost" onclick="closeFileMod()">ยกเลิก</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══ STORE ═══
+let events  = JSON.parse(localStorage.getItem('tpt-v3-events')  || '[]');
+let settings = JSON.parse(localStorage.getItem('tpt-v3-settings') || 'null') || {
+  tl: { start:30, listFrom:25, listTo:15, promoFrom:14 },
+  notif: { urgent:7, warn:21, showUrgent:true, showWarn:true }
+};
+
+let master = JSON.parse(localStorage.getItem('tpt-v3-master') || 'null') || {
+  worksheetTypes: ['Word Search','Reading','Coloring','Matching','Cut and Paste','Bingo','Craft','Writing Prompt','Math','Crossword'],
+  tagsPrimary: [],
+  tagsSecondary: [],
+  priorities: ['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive']
+};
+// Migration: old `tags` -> tagsPrimary; remove popularSearches
+if(master.tags && !master.tagsPrimary) master.tagsPrimary = master.tags;
+if(!master.tagsPrimary) master.tagsPrimary = [];
+if(!master.tagsSecondary) master.tagsSecondary = [];
+if(!master.priorities) master.priorities = ['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'];
+delete master.tags;
+delete master.popularSearches;
+
+function saveMaster(){ localStorage.setItem('tpt-v3-master', JSON.stringify(master)); }
+
+function saveAll(){ localStorage.setItem('tpt-v3-events',JSON.stringify(events)); }
+function saveSettings(){
+  settings.tl.start      = +document.getElementById('s-tl-start').value;
+  settings.tl.listFrom   = +document.getElementById('s-tl-list-from').value;
+  settings.tl.listTo     = +document.getElementById('s-tl-list-to').value;
+  settings.tl.promoFrom  = +document.getElementById('s-tl-promo-from').value;
+  settings.notif.urgent  = +document.getElementById('s-notif-urgent').value;
+  settings.notif.warn    = +document.getElementById('s-notif-warn').value;
+  settings.notif.showUrgent = document.getElementById('s-show-urgent').checked;
+  settings.notif.showWarn   = document.getElementById('s-show-warn').checked;
+  localStorage.setItem('tpt-v3-settings', JSON.stringify(settings));
+  alert('บันทึกการตั้งค่าเรียบร้อยค่ะ ✅');
+}
+
+function loadSettingsUI(){
+  document.getElementById('s-tl-start').value      = settings.tl.start;
+  document.getElementById('s-tl-list-from').value  = settings.tl.listFrom;
+  document.getElementById('s-tl-list-to').value    = settings.tl.listTo;
+  document.getElementById('s-tl-promo-from').value = settings.tl.promoFrom;
+  document.getElementById('s-notif-urgent').value  = settings.notif.urgent;
+  document.getElementById('s-notif-warn').value    = settings.notif.warn;
+  document.getElementById('s-show-urgent').checked = settings.notif.showUrgent;
+  document.getElementById('s-show-warn').checked   = settings.notif.showWarn;
+}
+
+// ═══ DATE HELPERS ═══
+// Internal storage: MM-DD format
+// User input/display: DD-MM format
+function ddmmToMmdd(ddmm){
+  const [d,m] = ddmm.split('-');
+  return `${m}-${d}`;
+}
+function mmddToDdmm(mmdd){
+  if(!mmdd) return '';
+  const [m,d] = mmdd.split('-');
+  return `${d}-${m}`;
+}
+function thisYearDate(monthDay){
+  const y = new Date().getFullYear();
+  return `${y}-${monthDay}`;
+}
+function nextOccurrence(monthDay){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const y = today.getFullYear();
+  let d = new Date(`${y}-${monthDay}`);
+  if(d < today) d = new Date(`${y+1}-${monthDay}`);
+  return d;
+}
+function calcTL(dateStr){
+  const d = new Date(dateStr);
+  const fmt = dt => dt.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  const add = (dt,days)=>{ const n=new Date(dt);n.setDate(n.getDate()+days);return n; };
+  const tl = settings.tl;
+  return {
+    start: add(d,-tl.start), startFmt: fmt(add(d,-tl.start)),
+    listFrom: add(d,-tl.listFrom), listFromFmt: fmt(add(d,-tl.listFrom)),
+    listTo: add(d,-tl.listTo), listToFmt: fmt(add(d,-tl.listTo)),
+    promoFrom: add(d,-tl.promoFrom), promoFromFmt: fmt(add(d,-tl.promoFrom)),
+    promoTo: add(d,-1), promoToFmt: fmt(add(d,-1)),
+    event: d, eventFmt: fmt(d)
+  };
+}
+function daysUntil(dateStr){
+  const today=new Date();today.setHours(0,0,0,0);
+  const d=new Date(dateStr);d.setHours(0,0,0,0);
+  return Math.round((d-today)/86400000);
+}
+function currentPhase(tl){
+  const today=new Date();today.setHours(0,0,0,0);
+  if(today>=tl.event)      return 'past';
+  if(today>=tl.promoFrom)  return 'promoting';
+  if(today>=tl.listFrom)   return 'listing';
+  if(today>=tl.start)      return 'creating';
+  return 'upcoming';
+}
+const phaseName = {upcoming:'ยังไม่ถึงเวลา',creating:'กำลังสร้าง',listing:'Listing แล้ว',promoting:'โปรโมทอยู่',past:'ผ่านแล้ว'};
+const phaseIdx  = {upcoming:0,creating:1,listing:2,promoting:3,past:4};
+
+// ═══ NAV ═══
+let currentPage='dashboard';
+let detailEventId=null;
+
+function nav(p){
+  // hide detail if open
+  document.getElementById('event-detail-page').style.display='none';
+  document.getElementById('event-detail-page').classList.remove('active');
+
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tnav').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const idx=['dashboard','events','add','master','settings'].indexOf(p);
+  document.querySelectorAll('.tnav')[idx].classList.add('active');
+  currentPage=p;
+
+  if(p==='dashboard') renderDashboard();
+  if(p==='events')    renderEventsList();
+  if(p==='add'&&!editingId) resetForm();
+  if(p==='master')    renderMaster();
+  if(p==='settings')  loadSettingsUI();
+}
+
+// ═══ MASTER DATA ═══
+function renderMaster(){
+  // Worksheet Types
+  document.getElementById('master-ws-list').innerHTML = master.worksheetTypes.map((t,i)=>`
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#F5F7FF;color:var(--primary);border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--primary-b);">
+      ${escHtml(t)}
+      <button onclick="removeMasterWs(${i})" style="border:none;background:none;cursor:pointer;color:var(--primary);font-size:14px;padding:0 4px;font-weight:700;">×</button>
+    </span>
+  `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี — เพิ่มด้านล่างค่ะ</div>`;
+
+  // Event Priority
+  document.getElementById('master-priority-list').innerHTML = master.priorities.map((t,i)=>`
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#EEF2FF;color:#4F46E5;border-radius:10px;font-size:13px;font-weight:700;border:1px solid #C7D2FE;">
+      ${escHtml(t)}
+      <button onclick="removeMasterPriority(${i})" style="border:none;background:none;cursor:pointer;color:#4F46E5;font-size:14px;padding:0 4px;font-weight:700;">×</button>
+    </span>
+  `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี Priority — เพิ่มด้านล่างค่ะ</div>`;
+
+  // Primary Tags
+  document.getElementById('master-tag-primary-list').innerHTML = master.tagsPrimary.map((t,i)=>`
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#FDF2F8;color:var(--pink);border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--pink-b);">
+      🔑 ${escHtml(t)}
+      <button onclick="removeMasterTagPrimary(${i})" style="border:none;background:none;cursor:pointer;color:var(--pink);font-size:14px;padding:0 4px;font-weight:700;">×</button>
+    </span>
+  `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี tag หลัก — เพิ่มด้านล่างค่ะ</div>`;
+
+  // Secondary Tags
+  document.getElementById('master-tag-secondary-list').innerHTML = master.tagsSecondary.map((t,i)=>`
+    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#FFF7ED;color:var(--orange);border-radius:10px;font-size:13px;font-weight:600;border:1px solid var(--orange-b);">
+      ${escHtml(t)}
+      <button onclick="removeMasterTagSecondary(${i})" style="border:none;background:none;cursor:pointer;color:var(--orange);font-size:14px;padding:0 4px;font-weight:700;">×</button>
+    </span>
+  `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี tag เสริม — เพิ่มด้านล่างค่ะ</div>`;
+}
+
+function addMasterPriority(){
+  const v = document.getElementById('master-priority-input').value.trim();
+  if(!v) return;
+  if(master.priorities.includes(v)){ alert('มี Priority นี้อยู่แล้วค่ะ'); return; }
+  master.priorities.push(v);
+  saveMaster();
+  document.getElementById('master-priority-input').value='';
+  renderMaster();
+}
+// Helper: count events that use a given master item
+function countEventUsage(field, value){
+  return events.filter(e => {
+    const v = e[field];
+    if(Array.isArray(v)) return v.includes(value);
+    return v === value;
+  }).length;
+}
+function confirmDeleteMaster(itemName, field, value){
+  const used = countEventUsage(field, value);
+  const usageMsg = used > 0
+    ? `\n\n⚠️ มี ${used} event(s) ที่ใช้ "${itemName}" อยู่\n(ข้อมูลใน events เดิมจะยังคงอยู่ — แต่ถ้าแก้ event แล้ว save ใหม่ ค่านี้จะหาย เพราะไม่มี chip ให้เลือก)`
+    : '';
+  return confirm(`ลบ "${itemName}" ?${usageMsg}\n\nยืนยันลบ?`);
+}
+
+function removeMasterPriority(i){
+  const item = master.priorities[i];
+  if(!confirmDeleteMaster(item, 'priority', item)) return;
+  master.priorities.splice(i,1);
+  saveMaster(); renderMaster();
+}
+
+function addMasterWs(){
+  const v = document.getElementById('master-ws-input').value.trim();
+  if(!v) return;
+  if(master.worksheetTypes.includes(v)){ alert('มีรายการนี้อยู่แล้วค่ะ'); return; }
+  master.worksheetTypes.push(v);
+  saveMaster();
+  document.getElementById('master-ws-input').value='';
+  renderMaster();
+}
+function removeMasterWs(i){
+  const item = master.worksheetTypes[i];
+  if(!confirmDeleteMaster(item, 'worksheetTypes', item)) return;
+  master.worksheetTypes.splice(i,1);
+  saveMaster(); renderMaster();
+}
+
+function addMasterTagPrimary(){
+  const v = document.getElementById('master-tag-primary-input').value.trim();
+  if(!v) return;
+  if(master.tagsPrimary.includes(v)){ alert('มี tag หลักนี้อยู่แล้วค่ะ'); return; }
+  master.tagsPrimary.push(v);
+  saveMaster();
+  document.getElementById('master-tag-primary-input').value='';
+  renderMaster();
+}
+function removeMasterTagPrimary(i){
+  const item = master.tagsPrimary[i];
+  if(!confirmDeleteMaster(item, 'tagsPrimary', item)) return;
+  master.tagsPrimary.splice(i,1);
+  saveMaster(); renderMaster();
+}
+
+function addMasterTagSecondary(){
+  const v = document.getElementById('master-tag-secondary-input').value.trim();
+  if(!v) return;
+  if(master.tagsSecondary.includes(v)){ alert('มี tag เสริมนี้อยู่แล้วค่ะ'); return; }
+  master.tagsSecondary.push(v);
+  saveMaster();
+  document.getElementById('master-tag-secondary-input').value='';
+  renderMaster();
+}
+function removeMasterTagSecondary(i){
+  const item = master.tagsSecondary[i];
+  if(!confirmDeleteMaster(item, 'tagsSecondary', item)) return;
+  master.tagsSecondary.splice(i,1);
+  saveMaster(); renderMaster();
+}
+
+// Render chips dynamically from master
+function renderFormChips(){
+  document.getElementById('ws-chips').innerHTML = master.worksheetTypes.map(t=>
+    `<span class="ws-chip" onclick="toggleChip(this)">${escHtml(t)}</span>`
+  ).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
+
+  document.getElementById('priority-chips').innerHTML = master.priorities.length ? master.priorities.map(t=>
+    `<span class="ws-chip" onclick="selectSingleChip('priority-chips', this)">${escHtml(t)}</span>`
+  ).join('') : `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี Priority — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
+
+  document.getElementById('tag-primary-chips').innerHTML = master.tagsPrimary.length ? master.tagsPrimary.map(t=>
+    `<span class="ws-chip" onclick="toggleChip(this)">${escHtml(t)}</span>`
+  ).join('') : `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี tag หลัก — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
+
+  document.getElementById('tag-secondary-chips').innerHTML = master.tagsSecondary.length ? master.tagsSecondary.map(t=>
+    `<span class="ws-chip" onclick="toggleChip(this)">${escHtml(t)}</span>`
+  ).join('') : `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี tag เสริม — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
+}
+
+// ═══ CHIPS ═══
+function toggleChip(el){el.classList.toggle('selected');}
+function selectSingleChip(cid, el){
+  document.querySelectorAll('#'+cid+' .ws-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function getChips(cid){return[...document.querySelectorAll('#'+cid+' .ws-chip.selected')].map(c=>c.textContent);}
+function setChips(cid,sel){document.querySelectorAll('#'+cid+' .ws-chip').forEach(c=>c.classList.toggle('selected',sel.includes(c.textContent)));}
+
+// ═══ YEAR DATA HELPERS ═══
+function getYearData(ev,year){
+  if(!ev.years) ev.years={};
+  if(!ev.years[year]) ev.years[year]={tasks:[],notes:'',files:[]};
+  return ev.years[year];
+}
+
+function taskStats(ev,year){
+  const yd = getYearData(ev,year);
+  const total=yd.tasks.length;
+  const done=yd.tasks.filter(t=>t.status==='complete').length;
+  return{total,done};
+}
+
+function allTaskStats(){
+  let total=0,done=0;
+  const y=new Date().getFullYear();
+  events.forEach(ev=>{
+    const s=taskStats(ev,y);
+    total+=s.total; done+=s.done;
+  });
+  return{total,done};
+}
+
+// ═══ SAVE/EDIT EVENTS ═══
+let editingId=null;
+
+function saveEvent(){
+  const name=document.getElementById('f-name').value.trim();
+  const ddmm=document.getElementById('f-monthday').value.trim();
+  if(!name||!ddmm){alert('กรุณากรอกชื่อ Event และวันที่ (DD-MM) ค่ะ');return;}
+  if(!/^\d{2}-\d{2}$/.test(ddmm)){alert('รูปแบบวันที่ต้องเป็น DD-MM เช่น 12-05 ค่ะ');return;}
+  const [dd,mm] = ddmm.split('-').map(Number);
+  if(mm<1||mm>12||dd<1||dd>31){alert('วันที่ไม่ถูกต้องค่ะ (DD: 01-31, MM: 01-12)');return;}
+  const md = ddmmToMmdd(ddmm); // store as MM-DD internally
+  const existing=editingId?events.find(e=>e.id===editingId):null;
+  const ev={
+    id: editingId||Date.now().toString(),
+    name, monthDay:md,
+    audience: document.getElementById('f-audience').value,
+    difficulty: document.getElementById('f-difficulty').value,
+    priority: getChips('priority-chips')[0] || existing?.priority || '',
+    keywords: document.getElementById('f-keywords').value.trim(),
+    existingProducts: document.getElementById('f-existing-products')?.value.trim() || '',
+    insights: document.getElementById('f-insights')?.value.trim() || '',
+    worksheetTypes: getChips('ws-chips'),
+    tagsPrimary: getChips('tag-primary-chips'),
+    tagsSecondary: getChips('tag-secondary-chips'),
+    notes: document.getElementById('f-notes').value.trim(),
+    years: existing?.years||{},
+    createdAt: existing?.createdAt||Date.now()
+  };
+  if(editingId){const i=events.findIndex(e=>e.id===editingId);events[i]=ev;}
+  else events.push(ev);
+  saveAll(); editingId=null; resetForm(); nav('events');
+}
+
+function resetForm(){
+  editingId=null;
+  ['f-name','f-monthday','f-keywords','f-existing-products','f-insights','f-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('f-audience').value='';
+  document.getElementById('f-difficulty').value='medium';
+  renderFormChips();
+  // No auto-select priority for new events; user picks one
+  document.getElementById('save-btn').textContent='💾 บันทึก';
+}
+
+function startEdit(id){
+  const e=events.find(ev=>ev.id===id);if(!e)return;
+  editingId=id;
+  renderFormChips();
+  document.getElementById('f-name').value=e.name;
+  document.getElementById('f-monthday').value=mmddToDdmm(e.monthDay)||'';
+  document.getElementById('f-audience').value=e.audience||'';
+  document.getElementById('f-difficulty').value=e.difficulty||'medium';
+  document.getElementById('f-keywords').value=e.keywords||'';
+  const epEl = document.getElementById('f-existing-products'); if(epEl) epEl.value = e.existingProducts || '';
+  const inEl = document.getElementById('f-insights'); if(inEl) inEl.value = e.insights || '';
+  document.getElementById('f-notes').value=e.notes||'';
+  setChips('ws-chips',e.worksheetTypes||[]);
+  // Only select priority chip if event has one saved; don't force default
+  setChips('priority-chips', e.priority ? [e.priority] : []);
+  // Backward compat: old `tags` field → migrate to tagsPrimary
+  setChips('tag-primary-chips', e.tagsPrimary || e.tags || []);
+  setChips('tag-secondary-chips', e.tagsSecondary || []);
+  document.getElementById('save-btn').textContent='💾 อัปเดต';
+  nav('add');
+}
+
+function deleteEvent(id){
+  if(!confirm('ลบ event นี้ทั้งหมดทุกปีด้วยนะคะ ยืนยัน?'))return;
+  events=events.filter(e=>e.id!==id);
+  saveAll(); closeDetail(); nav('events');
+}
+
+function confirmReset(){
+  if(!confirm('ล้างข้อมูลทั้งหมด? ไม่สามารถย้อนกลับได้'))return;
+  events=[];saveAll();nav('dashboard');
+}
+
+// ═══ DETAIL VIEW ═══
+let activeYear=null;
+
+function openDetail(id){
+  detailEventId=id;
+  const ev=events.find(e=>e.id===id);if(!ev)return;
+
+  // hide pages, show detail
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  const det=document.getElementById('event-detail-page');
+  det.style.display='block';
+  det.classList.add('active');
+
+  document.getElementById('det-name').textContent=ev.name;
+  const nextDate=nextOccurrence(ev.monthDay);
+  const tl=calcTL(nextDate.toISOString().split('T')[0]);
+  const days=daysUntil(nextDate.toISOString().split('T')[0]);
+  const daysText=days===0?'วันนี้!':days>0?`อีก ${days} วัน`:`ผ่านมา ${Math.abs(days)} วัน`;
+  document.getElementById('det-meta').textContent=`${ev.audience||'General'} · ${ev.difficulty||'medium'} · ถัดไป: ${tl.eventFmt} (${daysText})`;
+
+  // Tags row
+  const tagsRow = document.getElementById('det-tags-row');
+  const prHtml = ev.priority ? `<span style="padding:4px 11px;background:var(--primary-bg);color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(ev.priority)}</span>` : '';
+  const wsHtml = (ev.worksheetTypes||[]).map(t=>`<span style="padding:4px 11px;background:#F5F7FF;color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">📝 ${escHtml(t)}</span>`).join('');
+  const tpHtml = (ev.tagsPrimary || ev.tags || []).map(t=>`<span style="padding:4px 11px;background:#FDF2F8;color:var(--pink);border-radius:8px;font-size:11px;font-weight:700;">🔑 ${escHtml(t)}</span>`).join('');
+  const tsHtml = (ev.tagsSecondary || []).map(t=>`<span style="padding:4px 11px;background:#FFF7ED;color:var(--orange);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(t)}</span>`).join('');
+  tagsRow.innerHTML = (prHtml+wsHtml+tpHtml+tsHtml) ? `<div style="display:flex;flex-wrap:wrap;gap:6px;">${prHtml}${wsHtml}${tpHtml}${tsHtml}</div>` : '';
+
+  // Insights / existing products box
+  const insightsBox = document.getElementById('det-insights-box');
+  const hasEp = ev.existingProducts && ev.existingProducts.trim();
+  const hasIn = ev.insights && ev.insights.trim();
+  insightsBox.innerHTML = (hasEp || hasIn) ? `
+    <div style="background:#fff;border:1px solid var(--border);border-radius:18px;padding:1.1rem 1.3rem;margin-bottom:1.1rem;box-shadow:0 1px 2px rgba(31,18,77,.04);">
+      ${hasEp ? `<div style="margin-bottom:${hasIn?'12px':'0'};">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:4px;">📦 สินค้าที่มีอยู่แล้ว</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6;">${escHtml(ev.existingProducts)}</div>
+      </div>` : ''}
+      ${hasIn ? `<div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:4px;">💡 Insights / บทเรียน</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;">${escHtml(ev.insights)}</div>
+      </div>` : ''}
+    </div>` : '';
+
+  document.getElementById('det-timeline').innerHTML=`
+    <div class="tl-box start"><div class="tl-box-label">🖊 Start Creating</div><div class="tl-box-date">${tl.startFmt}</div></div>
+    <div class="tl-box listing"><div class="tl-box-label">📋 Listing</div><div class="tl-box-date">${tl.listFromFmt} – ${tl.listToFmt}</div></div>
+    <div class="tl-box promo"><div class="tl-box-label">📣 Promotion</div><div class="tl-box-date">${tl.promoFromFmt} – ${tl.promoToFmt}</div></div>`;
+
+  document.getElementById('det-edit-btn').onclick=()=>startEdit(id);
+  document.getElementById('det-del-btn').onclick=()=>deleteEvent(id);
+
+  renderYearTabs(ev);
+}
+
+function closeDetail(){
+  document.getElementById('event-detail-page').style.display='none';
+  document.getElementById('event-detail-page').classList.remove('active');
+  document.getElementById('page-'+currentPage).classList.add('active');
+  if(currentPage==='events')renderEventsList();
+  if(currentPage==='dashboard')renderDashboard();
+}
+
+function renderYearTabs(ev){
+  const today=new Date().getFullYear();
+  const years=Object.keys(ev.years||{}).map(Number);
+  if(!years.includes(today)) years.push(today);
+  if(!years.includes(today+1)) years.push(today+1);
+  years.sort((a,b)=>a-b);
+
+  if(!activeYear||!years.includes(activeYear)) activeYear=today;
+
+  const tabsEl=document.getElementById('year-tabs');
+  tabsEl.innerHTML=years.map(y=>
+    `<button class="year-tab${y===activeYear?' active':''}" onclick="switchYear(${y})">${y}</button>`
+  ).join('')
+  +`<button class="year-tab add-year" onclick="addYear()">+ ปีอื่น</button>`;
+
+  renderYearPanel(ev, activeYear);
+}
+
+function switchYear(y){
+  activeYear=y;
+  const ev=events.find(e=>e.id===detailEventId);if(!ev)return;
+  renderYearTabs(ev);
+}
+
+function addYear(){
+  const y=prompt('ใส่ปี (เช่น 2028):');
+  if(!y||isNaN(y))return;
+  const yr=parseInt(y);
+  const ev=events.find(e=>e.id===detailEventId);if(!ev)return;
+  if(!ev.years)ev.years={};
+  if(!ev.years[yr])ev.years[yr]={tasks:[],notes:'',files:[]};
+  activeYear=yr;
+  saveAll();
+  renderYearTabs(ev);
+}
+
+function renderYearPanel(ev,year){
+  const yd=getYearData(ev,year);
+  const done=yd.tasks.filter(t=>t.status==='complete').length;
+  const pct=yd.tasks.length?Math.round(done/yd.tasks.length*100):0;
+
+  const panels=document.getElementById('year-panels');
+  panels.innerHTML=`
+    <!-- Tasks -->
+    <div class="tasks-card">
+      <div class="tasks-header">
+        <div class="tasks-title">📝 งานปี ${year}</div>
+        <span style="font-size:12px;color:var(--text-2);">${done}/${yd.tasks.length} เสร็จ</span>
+      </div>
+      <div class="task-progress-row">
+        <div class="task-prog-track"><div class="task-prog-fill" style="width:${pct}%;"></div></div>
+        <span style="font-size:12px;font-weight:700;">${pct}%</span>
+      </div>
+      <div id="task-list">
+        ${yd.tasks.length===0
+          ? `<div style="font-size:13px;color:var(--text-3);text-align:center;padding:12px;">ยังไม่มีงาน — เพิ่มด้านล่างเลยค่ะ</div>`
+          : yd.tasks.map((t,i)=>`
+          <div class="task-item ${t.status}" id="ti-${i}">
+            <div class="task-status-dot" onclick="cycleStatus(${i})">${t.status==='complete'?'✓':t.status==='inprogress'?'⟳':''}</div>
+            <div class="task-name">${escHtml(t.name)}</div>
+            <select class="task-status-select" onchange="setTaskStatus(${i},this.value)">
+              <option value="not_started" ${t.status==='not_started'?'selected':''}>ยังไม่เริ่ม</option>
+              <option value="inprogress"  ${t.status==='inprogress'?'selected':''}>กำลังทำ</option>
+              <option value="complete"    ${t.status==='complete'?'selected':''}>เสร็จแล้ว ✅</option>
+            </select>
+            <button class="task-del-btn" onclick="deleteTask(${i})">✕</button>
+          </div>`).join('')
+        }
+      </div>
+      <div class="task-add-row">
+        <input type="text" id="new-task-input" placeholder="ชื่องานใหม่ เช่น Word Search Mother's Day" onkeydown="if(event.key==='Enter')addTask()"/>
+        <button class="btn primary sm" onclick="addTask()">+ เพิ่ม</button>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="notes-card">
+      <div style="font-size:13px;font-weight:600;margin-bottom:8px;">📒 Notes ปี ${year}</div>
+      <textarea id="year-notes" placeholder="จดบันทึก...">${escHtml(yd.notes||'')}</textarea>
+      <div style="margin-top:8px;">
+        <button class="btn sm" onclick="saveNotes()">💾 บันทึก Notes</button>
+      </div>
+    </div>
+
+    <!-- Files -->
+    <div class="files-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-size:13px;font-weight:600;">📁 ไฟล์ปี ${year} (${yd.files.length})</div>
+        <button class="btn sm primary" onclick="openFileMod()">+ เพิ่มไฟล์</button>
+      </div>
+      ${yd.files.length===0
+        ? `<div style="font-size:12px;color:var(--text-3);text-align:center;padding:10px;">ยังไม่มีไฟล์</div>`
+        : yd.files.map((f,i)=>`
+          <div class="file-item">
+            <div class="file-left">
+              <div class="file-ico fi-${f.type}">${{pdf:'📄',doc:'📝',img:'🖼',other:'📎'}[f.type]||'📎'}</div>
+              <div>
+                <div class="file-name">${f.link?`<a href="${f.link}" target="_blank" style="color:var(--primary);text-decoration:none;">${escHtml(f.name)}</a>`:escHtml(f.name)}</div>
+                ${f.note?`<div class="file-note">${escHtml(f.note)}</div>`:''}
+              </div>
+            </div>
+            <button class="btn xs ghost" onclick="deleteFile(${i})">✕</button>
+          </div>`).join('')
+      }
+    </div>`;
+}
+
+function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ═══ TASK ACTIONS ═══
+function getEvYd(){
+  const ev=events.find(e=>e.id===detailEventId);
+  if(!ev)return null;
+  return{ev,yd:getYearData(ev,activeYear)};
+}
+
+function addTask(){
+  const input=document.getElementById('new-task-input');
+  const name=input.value.trim();if(!name)return;
+  const{ev,yd}=getEvYd();
+  yd.tasks.push({name,status:'not_started'});
+  saveAll(); input.value='';
+  renderYearPanel(ev,activeYear);
+}
+
+function setTaskStatus(idx,val){
+  const{ev,yd}=getEvYd();
+  yd.tasks[idx].status=val;
+  saveAll(); renderYearPanel(ev,activeYear);
+}
+
+function cycleStatus(idx){
+  const{ev,yd}=getEvYd();
+  const cycle=['not_started','inprogress','complete'];
+  const cur=yd.tasks[idx].status||'not_started';
+  yd.tasks[idx].status=cycle[(cycle.indexOf(cur)+1)%cycle.length];
+  saveAll(); renderYearPanel(ev,activeYear);
+}
+
+function deleteTask(idx){
+  const{ev,yd}=getEvYd();
+  yd.tasks.splice(idx,1);
+  saveAll(); renderYearPanel(ev,activeYear);
+}
+
+function saveNotes(){
+  const{ev,yd}=getEvYd();
+  yd.notes=document.getElementById('year-notes').value;
+  saveAll(); alert('บันทึก Notes แล้วค่ะ ✅');
+}
+
+// ═══ FILE MODAL ═══
+function openFileMod(){document.getElementById('file-modal').classList.remove('hidden');}
+function closeFileMod(){document.getElementById('file-modal').classList.add('hidden');}
+
+function saveFile(){
+  const name=document.getElementById('fm-name').value.trim();
+  if(!name){alert('กรุณากรอกชื่อไฟล์ค่ะ');return;}
+  const{ev,yd}=getEvYd();
+  yd.files.push({
+    id:Date.now().toString(),
+    name,
+    type:document.getElementById('fm-type').value,
+    link:document.getElementById('fm-link').value.trim(),
+    note:document.getElementById('fm-note').value.trim()
+  });
+  saveAll(); closeFileMod();
+  ['fm-name','fm-link','fm-note'].forEach(id=>document.getElementById(id).value='');
+  renderYearPanel(ev,activeYear);
+}
+
+function deleteFile(idx){
+  const{ev,yd}=getEvYd();
+  yd.files.splice(idx,1);
+  saveAll(); renderYearPanel(ev,activeYear);
+}
+
+// ═══ RENDER DASHBOARD ═══
+function renderDashboard(){
+  const today=new Date();today.setHours(0,0,0,0);
+  const year=today.getFullYear();
+
+  // Stats
+  const ts=allTaskStats();
+  const upcoming=events.filter(e=>{
+    const d=nextOccurrence(e.monthDay);
+    return daysUntil(d.toISOString().split('T')[0])>=0;
+  }).length;
+  document.getElementById('s-events').textContent=events.length;
+  document.getElementById('s-upcoming').textContent=upcoming;
+  document.getElementById('s-tasks').textContent=ts.done;
+  document.getElementById('s-pct').textContent=ts.total?Math.round(ts.done/ts.total*100)+'%':'—';
+
+  // Banners
+  const urgentThresh=settings.notif.urgent;
+  const warnThresh  =settings.notif.warn;
+
+  const sortedByDate=events.map(ev=>{
+    const nd=nextOccurrence(ev.monthDay);
+    return{ev,days:daysUntil(nd.toISOString().split('T')[0]),nextDate:nd};
+  }).filter(x=>x.days>=0).sort((a,b)=>a.days-b.days);
+
+  const urgentList=sortedByDate.filter(x=>x.days<=urgentThresh);
+  const warnList  =sortedByDate.filter(x=>x.days>urgentThresh&&x.days<=warnThresh);
+
+  const bu=document.getElementById('b-urgent');
+  const bw=document.getElementById('b-warn');
+
+  if(settings.notif.showUrgent&&urgentList.length){
+    bu.classList.remove('hidden');
+    document.getElementById('bl-urgent').innerHTML=urgentList.map(x=>{
+      const tl=calcTL(x.nextDate.toISOString().split('T')[0]);
+      const ph=currentPhase(tl);
+      return`<div class="ban-item" onclick="openDetail('${x.ev.id}')">
+        <div><div class="ban-name">📌 ${x.ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[ph]} · ${tl.eventFmt}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--red);">อีก ${x.days} วัน</div>
+      </div>`;
+    }).join('');
+  } else bu.classList.add('hidden');
+
+  if(settings.notif.showWarn&&warnList.length){
+    bw.classList.remove('hidden');
+    document.getElementById('bl-warn').innerHTML=warnList.map(x=>{
+      const tl=calcTL(x.nextDate.toISOString().split('T')[0]);
+      const ph=currentPhase(tl);
+      return`<div class="ban-item" onclick="openDetail('${x.ev.id}')">
+        <div><div class="ban-name">📌 ${x.ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[ph]} · ${tl.eventFmt}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--orange);">อีก ${x.days} วัน</div>
+      </div>`;
+    }).join('');
+  } else bw.classList.add('hidden');
+
+  // Main list
+  const dl=document.getElementById('dash-list');
+  if(!events.length){
+    dl.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>ยังไม่มี event — กด ➕ เพิ่มค่ะ</p></div>`;
+    return;
+  }
+
+  dl.innerHTML=sortedByDate.concat(
+    events.map(ev=>{const nd=nextOccurrence(ev.monthDay);return{ev,days:daysUntil(nd.toISOString().split('T')[0]),nextDate:nd};})
+      .filter(x=>x.days<0).sort((a,b)=>b.days-a.days)
+  ).map(({ev,days,nextDate})=>{
+    const dateStr=nextDate.toISOString().split('T')[0];
+    const tl=calcTL(dateStr);
+    const ph=currentPhase(tl);
+    const dc=days<0?'past':days<=urgentThresh?'urgent':days<=warnThresh?'soon':'ok';
+    const dt=days<0?`ผ่านมา ${Math.abs(days)} วัน`:days===0?'วันนี้!':`อีก ${days} วัน`;
+    const phIdx=phaseIdx[ph]||0;
+    const segs=['upcoming','creating','listing','promoting','past'].map((_,i)=>
+      `<div class="phase-seg ${i<phIdx?'done-seg':i===phIdx?'active':''}"></div>`).join('');
+    const ts=taskStats(ev,new Date().getFullYear());
+    const tsHtml=ts.total?`<div class="task-summary"><span>${ts.done}/${ts.total}</span> งานสำเร็จปีนี้</div>`:'';
+
+    return`<div class="upcoming-card" onclick="openDetail('${ev.id}')">
+      <div>
+        <div class="uc-name">${ev.name}</div>
+        <div class="uc-meta">${ev.audience||'General'} · ${ev.difficulty} · ${tl.eventFmt}</div>
+        <div class="uc-phases">
+          <span class="pc ${ph}">${phaseName[ph]}</span>
+          <span class="pc info">สร้าง: ${tl.startFmt}</span>
+          <span class="pc info">List: ${tl.listFromFmt}</span>
+          <span class="pc info">โปรโมท: ${tl.promoFromFmt}</span>
+        </div>
+        <div class="phase-bar">${segs}</div>
+        ${tsHtml}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+        <span class="days-badge ${dc}">${dt}</span>
+        <span style="font-size:11px;color:var(--text-3);">คลิกดูรายละเอียด</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ═══ RENDER EVENTS LIST ═══
+function renderEventsList(){
+  const q=(document.getElementById('ev-search')?.value||'').toLowerCase();
+  const filtered=events.filter(e=>!q||e.name.toLowerCase().includes(q)||(e.keywords||'').toLowerCase().includes(q))
+    .sort((a,b)=>{
+      const da=nextOccurrence(a.monthDay);
+      const db=nextOccurrence(b.monthDay);
+      return da-db;
+    });
+
+  const el=document.getElementById('events-list');
+  if(!filtered.length){
+    el.innerHTML=`<div class="empty"><div class="empty-ico">🔍</div><p>ไม่พบ event ค่ะ</p></div>`;
+    return;
+  }
+
+  const accents=['#F5C6D7','#C5C0F0','#9FE0C8','#FAC775','#AFA9EC'];
+
+  el.innerHTML=filtered.map((ev,i)=>{
+    const nd=nextOccurrence(ev.monthDay);
+    const dateStr=nd.toISOString().split('T')[0];
+    const tl=calcTL(dateStr);
+    const days=daysUntil(dateStr);
+    const dc=days<0?'past':days<=settings.notif.urgent?'urgent':days<=settings.notif.warn?'soon':'ok';
+    const dt=days<0?`ผ่านมา ${Math.abs(days)} วัน`:days===0?'วันนี้!':`อีก ${days} วัน`;
+    const ts=taskStats(ev,new Date().getFullYear());
+    const pct=ts.total?Math.round(ts.done/ts.total*100):0;
+    const yrs=Object.keys(ev.years||{}).length;
+
+    return`<div class="upcoming-card" style="display:block;cursor:default;">
+      <div style="height:3px;background:${accents[i%accents.length]};margin:-1rem -1.25rem 1rem;width:calc(100%+2.5rem);"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+        <div>
+          <div class="uc-name" style="font-size:17px;">${ev.name}</div>
+          <div class="uc-meta">${ev.audience||'General'} · ${ev.difficulty} · ถัดไป ${tl.eventFmt} · <span class="days-badge ${dc}" style="font-size:11px;">${dt}</span></div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn sm" onclick="openDetail('${ev.id}')">📋 จัดการ</button>
+          <button class="btn sm" onclick="startEdit('${ev.id}')">✏️</button>
+          <button class="btn sm ghost" onclick="deleteEvFromList('${ev.id}')">🗑</button>
+        </div>
+      </div>
+      ${ev.worksheetTypes?.length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${ev.worksheetTypes.map(t=>`<span style="padding:4px 11px;background:#F5F7FF;color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">📝 ${escHtml(t)}</span>`).join('')}</div>`:''}
+      ${(ev.tagsPrimary || ev.tags || []).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${(ev.tagsPrimary || ev.tags).map(t=>`<span style="padding:4px 11px;background:#FDF2F8;color:var(--pink);border-radius:8px;font-size:11px;font-weight:700;">🔑 ${escHtml(t)}</span>`).join('')}</div>`:''}
+      ${(ev.tagsSecondary || []).length?`<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;">${ev.tagsSecondary.map(t=>`<span style="padding:4px 11px;background:#FFF7ED;color:var(--orange);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(t)}</span>`).join('')}</div>`:''}
+      <div style="display:flex;align-items:center;gap:12px;font-size:12px;color:var(--text-2);font-weight:500;">
+        <span>🗂 ${yrs} ปีที่บันทึก</span>
+        ${ts.total?`<span>✅ งาน ${ts.done}/${ts.total} (${pct}%)</span>`:'<span>ยังไม่มีงานปีนี้</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function deleteEvFromList(id){
+  if(!confirm('ลบ event นี้ทั้งหมดทุกปีด้วยนะคะ ยืนยัน?'))return;
+  events=events.filter(e=>e.id!==id);
+  saveAll(); renderEventsList(); renderDashboard();
+}
+
+// ═══ GOOGLE DRIVE SYNC ═══
+const DRIVE_FILE_NAME = 'tpt-planner-data.json';
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+let driveAccessToken = null;
+let driveFileId = localStorage.getItem('tpt-drive-file-id') || null;
+let driveUserInfo = null;
+
+function getClientId(){
+  return localStorage.getItem('tpt-drive-client-id') || '';
+}
+
+function saveClientId(){
+  const val = document.getElementById('s-client-id').value.trim();
+  if(!val){ alert('กรุณากรอก Client ID ค่ะ'); return; }
+  localStorage.setItem('tpt-drive-client-id', val);
+  alert('บันทึก Client ID แล้วค่ะ ✅ กด "เชื่อมต่อ Google Drive" ได้เลย');
+}
+
+function loadClientIdUI(){
+  const el = document.getElementById('s-client-id');
+  if(el) el.value = getClientId();
+}
+
+function driveSignIn(){
+  const clientId = getClientId();
+  if(!clientId){
+    alert('กรุณากรอก Google OAuth Client ID ในหน้าตั้งค่าก่อนค่ะ\n\n(ไปที่เมนู ⚙️ ตั้งค่า → Google Drive Sync)');
+    nav('settings'); return;
+  }
+  const client = google.accounts.oauth2.initTokenClient({
+    client_id: clientId,
+    scope: 'https://www.googleapis.com/auth/drive.appdata profile email',
+    callback: async (resp) => {
+      if(resp.error){ console.error(resp); return; }
+      driveAccessToken = resp.access_token;
+      await fetchDriveUserInfo();
+      updateDriveBar(true);
+      showDriveToast('เชื่อมต่อ Google Drive แล้วค่ะ ✅');
+    }
+  });
+  client.requestAccessToken();
+}
+
+function driveSignOut(){
+  const clientId = getClientId();
+  if(driveAccessToken && clientId){
+    google.accounts.oauth2.revoke(driveAccessToken);
+  }
+  driveAccessToken = null;
+  driveUserInfo = null;
+  updateDriveBar(false);
+}
+
+async function fetchDriveUserInfo(){
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${driveAccessToken}` }
+    });
+    driveUserInfo = await r.json();
+  } catch(e){ driveUserInfo = null; }
+}
+
+function updateDriveBar(connected){
+  const bar   = document.getElementById('drive-bar');
+  const dot   = document.getElementById('drive-dot');
+  const txt   = document.getElementById('drive-status-text');
+  const avatar= document.getElementById('drive-avatar');
+  const saveB = document.getElementById('drive-save-btn');
+  const loadB = document.getElementById('drive-load-btn');
+  const outB  = document.getElementById('drive-signout-btn');
+  const connB = document.getElementById('drive-connect-btn');
+
+  if(connected){
+    bar.classList.remove('hidden','warn');
+    dot.classList.remove('warn');
+    txt.textContent = driveUserInfo ? `เชื่อมต่อแล้ว: ${driveUserInfo.email}` : 'เชื่อมต่อ Google Drive แล้ว';
+    if(driveUserInfo?.picture){ avatar.src = driveUserInfo.picture; avatar.style.display='block'; }
+    saveB.style.display = loadB.style.display = outB.style.display = '';
+    if(connB) connB.style.display = 'none';
+  } else {
+    bar.classList.add('hidden');
+    if(connB) connB.style.display = '';
+    avatar.style.display = 'none';
+    saveB.style.display = loadB.style.display = outB.style.display = 'none';
+  }
+}
+
+async function driveGetFileId(){
+  // Search for existing file in appDataFolder
+  const r = await fetch(
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name='${DRIVE_FILE_NAME}'&fields=files(id,name,modifiedTime)`,
+    { headers: { Authorization: `Bearer ${driveAccessToken}` } }
+  );
+  const data = await r.json();
+  if(data.files && data.files.length > 0){
+    driveFileId = data.files[0].id;
+    localStorage.setItem('tpt-drive-file-id', driveFileId);
+    return driveFileId;
+  }
+  return null;
+}
+
+async function driveSave(){
+  if(!driveAccessToken){ alert('กรุณาเชื่อมต่อ Google Drive ก่อนค่ะ'); return; }
+  const btn = document.getElementById('drive-save-btn');
+  btn.textContent = '⏳ กำลังบันทึก...'; btn.disabled = true;
+  try {
+    const payload = JSON.stringify({ version:3, savedAt: new Date().toISOString(), events, settings, master });
+    const existId = driveFileId || await driveGetFileId();
+
+    if(existId){
+      // Update existing file
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${existId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: { Authorization: `Bearer ${driveAccessToken}`, 'Content-Type': 'application/json' },
+        body: payload
+      });
+    } else {
+      // Create new file in appDataFolder
+      const meta = { name: DRIVE_FILE_NAME, parents: ['appDataFolder'] };
+      const form = new FormData();
+      form.append('metadata', new Blob([JSON.stringify(meta)], {type:'application/json'}));
+      form.append('file', new Blob([payload], {type:'application/json'}));
+      const r = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${driveAccessToken}` },
+        body: form
+      });
+      const d = await r.json();
+      driveFileId = d.id;
+      localStorage.setItem('tpt-drive-file-id', driveFileId);
+    }
+    showDriveToast('☁️ บันทึกขึ้น Drive แล้วค่ะ ✅');
+  } catch(e){
+    alert('เกิดข้อผิดพลาดค่ะ: ' + e.message);
+  } finally {
+    btn.textContent = '☁️ บันทึกขึ้น Drive'; btn.disabled = false;
+  }
+}
+
+async function driveLoad(){
+  if(!driveAccessToken){ alert('กรุณาเชื่อมต่อ Google Drive ก่อนค่ะ'); return; }
+  const btn = document.getElementById('drive-load-btn');
+  btn.textContent = '⏳ กำลังโหลด...'; btn.disabled = true;
+  try {
+    const fileId = driveFileId || await driveGetFileId();
+    if(!fileId){ alert('ยังไม่มีไฟล์ใน Drive ค่ะ กด "บันทึกขึ้น Drive" ก่อนนะคะ'); return; }
+
+    const r = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+      headers: { Authorization: `Bearer ${driveAccessToken}` }
+    });
+    const data = await r.json();
+    if(!data.events) throw new Error('ไฟล์ไม่ถูกต้อง');
+
+    const savedAt = data.savedAt ? new Date(data.savedAt).toLocaleString('th-TH') : 'ไม่ทราบ';
+    const localCount = events.length;
+    const driveCount = data.events.length;
+    let warnMsg = '';
+    if(localCount > driveCount){
+      warnMsg = `\n\n⚠️ ระวัง! เครื่องนี้มี ${localCount} events แต่ Drive มี ${driveCount} events\nถ้าโหลด → ${localCount - driveCount} events ในเครื่องอาจหาย\nควร Save Drive ก่อนถ้าเครื่องนี้มีข้อมูลใหม่กว่า`;
+    }
+    if(!confirm(`📥 โหลดจาก Drive?\n\n• ใน Drive: ${driveCount} events\n• ในเครื่องนี้: ${localCount} events\n• บันทึกล่าสุด: ${savedAt}${warnMsg}\n\nกด OK เพื่อแทนที่ข้อมูลในเครื่องด้วยข้อมูลจาก Drive`)) return;
+
+    events = data.events;
+    if(data.settings){ settings = data.settings; localStorage.setItem('tpt-v3-settings', JSON.stringify(settings)); loadSettingsUI(); }
+    if(data.master){ master = data.master; saveMaster(); renderFormChips(); }
+    saveAll();
+    showDriveToast(`📥 โหลด ${events.length} events จาก Drive แล้วค่ะ ✅`);
+    renderDashboard();
+  } catch(e){
+    alert('เกิดข้อผิดพลาดค่ะ: ' + e.message);
+  } finally {
+    btn.textContent = '📥 โหลดจาก Drive'; btn.disabled = false;
+  }
+}
+
+function showDriveToast(msg){
+  const t = document.createElement('div');
+  t.textContent = msg;
+  Object.assign(t.style, {
+    position:'fixed', bottom:'20px', left:'50%', transform:'translateX(-50%)',
+    background:'#1C1A16', color:'#fff', padding:'10px 20px', borderRadius:'10px',
+    fontSize:'13px', zIndex:'999', boxShadow:'0 4px 16px rgba(0,0,0,.2)',
+    animation:'slideIn .3s ease'
+  });
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+
+function exportJSON(){
+  const backup = {
+    version: 3,
+    exportedAt: new Date().toISOString(),
+    events,
+    settings,
+    master
+  };
+  const json = JSON.stringify(backup, null, 2);
+  const date = new Date().toISOString().split('T')[0];
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([json], {type:'application/json'}));
+  a.download = `tpt-backup-${date}.json`;
+  a.click();
+}
+
+function triggerImport(){
+  document.getElementById('import-file-input').click();
+}
+
+function importJSON(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(!data.events || !Array.isArray(data.events)){
+        throw new Error('ไฟล์ไม่ถูกต้องค่ะ');
+      }
+      const count = data.events.length;
+      const localCount = events.length;
+      const exportedAt = data.exportedAt ? new Date(data.exportedAt).toLocaleString('th-TH') : 'ไม่ทราบ';
+      let warnMsg = '';
+      if(localCount > count){
+        warnMsg = `\n\n⚠️ ระวัง! เครื่องนี้มี ${localCount} events แต่ไฟล์มี ${count} events\nถ้า Restore → ${localCount - count} events ในเครื่องจะหาย`;
+      }
+      if(!confirm(`📂 Restore JSON?\n\n• ในไฟล์: ${count} events\n• ในเครื่องนี้: ${localCount} events\n• Backup เมื่อ: ${exportedAt}${warnMsg}\n\nกด OK เพื่อแทนที่ข้อมูลในเครื่องด้วยข้อมูลจากไฟล์`)) return;
+
+      events = data.events;
+      if(data.settings) {
+        settings = data.settings;
+        localStorage.setItem('tpt-v3-settings', JSON.stringify(settings));
+        loadSettingsUI();
+      }
+      if(data.master) {
+        master = data.master;
+        saveMaster();
+        renderFormChips();
+      }
+      saveAll();
+
+      const status = document.getElementById('import-status');
+      if(status){
+        status.style.display = 'block';
+        status.style.color = 'var(--teal)';
+        status.innerHTML = `✅ โหลดสำเร็จ! ${count} events · Backup วันที่ ${data.exportedAt ? new Date(data.exportedAt).toLocaleDateString('th-TH') : 'ไม่ทราบ'}`;
+        setTimeout(()=>{ status.style.display='none'; }, 5000);
+      }
+      renderDashboard();
+    } catch(err) {
+      alert('ไม่สามารถอ่านไฟล์ได้ค่ะ กรุณาเลือกไฟล์ .json ที่ Backup ไว้จากแอปนี้');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = ''; // reset so same file can be re-imported
+}
+
+
+function exportCSV(){
+  if(!events.length){alert('ยังไม่มีข้อมูลค่ะ');return;}
+  const rows=[['Event','Month-Day','Audience','Difficulty','Keywords','Year','Tasks Done','Tasks Total','Notes']];
+  events.forEach(ev=>{
+    const yrs=Object.keys(ev.years||{});
+    if(!yrs.length){
+      rows.push([ev.name,ev.monthDay,ev.audience,ev.difficulty,ev.keywords,'','','','']);
+    } else {
+      yrs.forEach(y=>{
+        const yd=ev.years[y];
+        const done=yd.tasks.filter(t=>t.status==='complete').length;
+        rows.push([ev.name,ev.monthDay,ev.audience,ev.difficulty,ev.keywords,y,done,yd.tasks.length,yd.notes||'']);
+      });
+    }
+  });
+  const csv=rows.map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download='tpt-planner-export.csv'; a.click();
+}
+
+// ═══ INIT ═══
+loadSettingsUI();
+loadClientIdUI();
+renderFormChips();
+updateDriveBar(false);
+renderDashboard();
+</script>
+</body>
+</html>
