@@ -805,7 +805,7 @@ body {
         <input type="text" id="f-monthday" placeholder="เช่น 12-05 (12 พ.ค.)"/>
       </div>
     </div>
-    <div class="form-row s3">
+    <div class="form-row">
       <div class="field">
         <label>Audience</label>
         <select id="f-audience">
@@ -816,14 +816,12 @@ body {
         </select>
       </div>
       <div class="field">
-        <label>Difficulty</label>
-        <select id="f-difficulty">
-          <option value="easy">Easy</option><option value="medium" selected>Medium</option><option value="hard">Hard</option>
+        <label>Event Priority</label>
+        <select id="f-priority">
+          <option>Core Even</option>
+          <option>Popular Search</option>
+          <option>Classroom Theme</option>
         </select>
-      </div>
-      <div class="field">
-        <label>Keywords</label>
-        <input type="text" id="f-keywords" placeholder="เช่น flowers, love"/>
       </div>
     </div>
     <div class="field" style="margin-bottom:14px;">
@@ -831,10 +829,6 @@ body {
       <div class="ws-grid" id="ws-chips"></div>
     </div>
 
-    <div class="field" style="margin-bottom:14px;">
-      <label style="margin-bottom:10px;display:block;">⭐ Event Priority</label>
-      <div class="ws-grid" id="priority-chips"></div>
-    </div>
     <div class="field" style="margin-bottom:14px;">
       <label style="margin-bottom:10px;display:block;">🔑 Tag หลัก</label>
       <div class="ws-grid" id="tag-primary-chips"></div>
@@ -1068,7 +1062,7 @@ body {
         <div style="font-size:12px;font-weight:800;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">📋 รูปแบบ CSV ที่รองรับ</div>
         <div style="font-size:12px;color:var(--text-3);line-height:2;">
           <b>คอลัมน์ที่ต้องมี:</b> <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">name</code> และ <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">date</code> (รูปแบบ DD-MM หรือ YYYY-MM-DD)<br/>
-          <b>คอลัมน์ optional:</b> audience, difficulty, priority, keywords, worksheetTypes (คั่นด้วย |), tagsPrimary (คั่นด้วย |), tagsSecondary (คั่นด้วย |), notes, existingProducts, insights<br/>
+          <b>คอลัมน์ optional:</b> audience, priority (Core Even / Popular Search / Classroom Theme), worksheetTypes (คั่นด้วย |), tagsPrimary (คั่นด้วย |), tagsSecondary (คั่นด้วย |), notes, existingProducts, insights<br/>
           <b>เคล็ดลับ:</b> กด "ดาวน์โหลด Template CSV" เพื่อได้ไฟล์ที่กรอกได้เลยค่ะ
         </div>
       </div>
@@ -1391,10 +1385,6 @@ function renderFormChips(){
     `<span class="ws-chip" onclick="toggleChip(this)">${escHtml(t)}</span>`
   ).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
 
-  document.getElementById('priority-chips').innerHTML = master.priorities.length ? master.priorities.map(t=>
-    `<span class="ws-chip" onclick="selectSingleChip('priority-chips', this)">${escHtml(t)}</span>`
-  ).join('') : `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี Priority — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
-
   document.getElementById('tag-primary-chips').innerHTML = master.tagsPrimary.length ? master.tagsPrimary.map(t=>
     `<span class="ws-chip" onclick="toggleChip(this)">${escHtml(t)}</span>`
   ).join('') : `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี tag หลัก — เพิ่มที่ 🗂 ข้อมูลหลัก</div>`;
@@ -1454,9 +1444,8 @@ function saveEvent(){
     id: editingId||Date.now().toString(),
     name, monthDay:md,
     audience: document.getElementById('f-audience').value,
-    difficulty: document.getElementById('f-difficulty').value,
-    priority: getChips('priority-chips')[0] || existing?.priority || '',
-    keywords: document.getElementById('f-keywords').value.trim(),
+    priority: document.getElementById('f-priority').value,
+    keywords: existing?.keywords || '',
     existingProducts: document.getElementById('f-existing-products')?.value.trim() || '',
     insights: document.getElementById('f-insights')?.value.trim() || '',
     worksheetTypes: getChips('ws-chips'),
@@ -1473,11 +1462,10 @@ function saveEvent(){
 
 function resetForm(){
   editingId=null;
-  ['f-name','f-monthday','f-keywords','f-existing-products','f-insights','f-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-name','f-monthday','f-existing-products','f-insights','f-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('f-audience').value='';
-  document.getElementById('f-difficulty').value='medium';
+  document.getElementById('f-priority').value='Core Even';
   renderFormChips();
-  // No auto-select priority for new events; user picks one
   document.getElementById('save-btn').textContent='💾 บันทึก';
 }
 
@@ -1488,14 +1476,11 @@ function startEdit(id){
   document.getElementById('f-name').value=e.name;
   document.getElementById('f-monthday').value=mmddToDdmm(e.monthDay)||'';
   document.getElementById('f-audience').value=e.audience||'';
-  document.getElementById('f-difficulty').value=e.difficulty||'medium';
-  document.getElementById('f-keywords').value=e.keywords||'';
+  document.getElementById('f-priority').value=['Core Even','Popular Search','Classroom Theme'].includes(e.priority) ? e.priority : 'Core Even';
   const epEl = document.getElementById('f-existing-products'); if(epEl) epEl.value = e.existingProducts || '';
   const inEl = document.getElementById('f-insights'); if(inEl) inEl.value = e.insights || '';
   document.getElementById('f-notes').value=e.notes||'';
   setChips('ws-chips',e.worksheetTypes||[]);
-  // Only select priority chip if event has one saved; don't force default
-  setChips('priority-chips', e.priority ? [e.priority] : []);
   // Backward compat: old `tags` field → migrate to tagsPrimary
   setChips('tag-primary-chips', e.tagsPrimary || e.tags || []);
   setChips('tag-secondary-chips', e.tagsSecondary || []);
@@ -1532,7 +1517,7 @@ function openDetail(id){
   const tl=calcTL(nextDate.toISOString().split('T')[0]);
   const days=daysUntil(nextDate.toISOString().split('T')[0]);
   const daysText=days===0?'วันนี้!':days>0?`อีก ${days} วัน`:`ผ่านมา ${Math.abs(days)} วัน`;
-  document.getElementById('det-meta').textContent=`${ev.audience||'General'} · ${ev.difficulty||'medium'} · ถัดไป: ${tl.eventFmt} (${daysText})`;
+  document.getElementById('det-meta').textContent=`${ev.audience||'General'} · ${ev.priority||'Core Even'} · ถัดไป: ${tl.eventFmt} (${daysText})`;
 
   // Tags row
   const tagsRow = document.getElementById('det-tags-row');
@@ -1882,7 +1867,7 @@ function renderDashboard(){
     return`<div class="upcoming-card" onclick="openDetail('${ev.id}')">
       <div>
         <div class="uc-name">${ev.name}</div>
-        <div class="uc-meta">${ev.audience||'General'} · ${ev.difficulty} · ${tl.eventFmt}</div>
+        <div class="uc-meta">${ev.audience||'General'} · ${ev.priority||'Core Even'} · ${tl.eventFmt}</div>
         <div class="uc-phases">
           <span class="pc ${ph}">${phaseName[ph]}</span>
           <span class="pc info">สร้าง: ${tl.startFmt}</span>
@@ -1934,7 +1919,7 @@ function renderEventsList(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
         <div>
           <div class="uc-name" style="font-size:17px;">${ev.name}</div>
-          <div class="uc-meta">${ev.audience||'General'} · ${ev.difficulty} · ถัดไป ${tl.eventFmt} · <span class="days-badge ${dc}" style="font-size:11px;">${dt}</span></div>
+          <div class="uc-meta">${ev.audience||'General'} · ${ev.priority||'Core Even'} · ถัดไป ${tl.eventFmt} · <span class="days-badge ${dc}" style="font-size:11px;">${dt}</span></div>
         </div>
         <div style="display:flex;gap:6px;">
           <button class="btn sm" onclick="openDetail('${ev.id}')">📋 จัดการ</button>
@@ -2220,16 +2205,16 @@ function importJSON(event){
 
 function exportCSV(){
   if(!events.length){alert('ยังไม่มีข้อมูลค่ะ');return;}
-  const rows=[['Event','Month-Day','Audience','Difficulty','Keywords','Year','Tasks Done','Tasks Total','Notes']];
+  const rows=[['Event','Month-Day','Audience','Priority','Year','Tasks Done','Tasks Total','Notes']];
   events.forEach(ev=>{
     const yrs=Object.keys(ev.years||{});
     if(!yrs.length){
-      rows.push([ev.name,ev.monthDay,ev.audience,ev.difficulty,ev.keywords,'','','','']);
+      rows.push([ev.name,ev.monthDay,ev.audience,ev.priority,'','','','']);
     } else {
       yrs.forEach(y=>{
         const yd=ev.years[y];
         const done=yd.tasks.filter(t=>t.status==='complete').length;
-        rows.push([ev.name,ev.monthDay,ev.audience,ev.difficulty,ev.keywords,y,done,yd.tasks.length,yd.notes||'']);
+        rows.push([ev.name,ev.monthDay,ev.audience,ev.priority,y,done,yd.tasks.length,yd.notes||'']);
       });
     }
   });
@@ -2252,9 +2237,7 @@ function downloadCSVTemplate(){
     'name (ชื่อ event)*',
     'date (วันที่ DD-MM หรือ YYYY-MM-DD)*',
     'audience (กลุ่มผู้เรียน)',
-    'difficulty (easy/medium/hard)',
     'priority',
-    'keywords (คั่นด้วยเว้นวรรค)',
     'worksheetTypes (คั่นด้วย |)',
     'tagsPrimary (คั่นด้วย |)',
     'tagsSecondary (คั่นด้วย |)',
@@ -2263,14 +2246,14 @@ function downloadCSVTemplate(){
     'insights (บทเรียนจากปีที่แล้ว)'
   ];
   const example1 = [
-    "Mother's Day","12-05","Grade 1–3","medium","Core Event",
-    "flowers love mom","Word Search|Coloring","Spring|Family","Cute",
+    "Mother's Day","12-05","Grade 1–3","Core Even",
+    "Word Search|Coloring","Spring|Family","Cute",
     "ปีที่แล้วขายดี Word Search","Word Search v1 (2024)",
     "Cover สีชมพูอ่อน CTR ดีกว่าสีเข้ม"
   ];
   const example2 = [
-    "Halloween","31-10","Grade 3–5","medium","High Search",
-    "spooky witch pumpkin","Coloring|Craft|Bingo","Fall|Halloween","",
+    "Halloween","31-10","Grade 3–5","Classroom Theme",
+    "Coloring|Craft|Bingo","Fall|Halloween","",
     "","","ปีนี้ควรเพิ่ม Craft set"
   ];
   const rows = [ headers, example1, example2 ];
@@ -2343,9 +2326,7 @@ function importCSV(event){
           name,
           monthDay,
           audience:          get(row, 'audience'),
-          difficulty:        get(row, 'difficulty') || 'medium',
-          priority:          get(row, 'priority'),
-          keywords:          get(row, 'keywords'),
+          priority:          ['Core Even','Popular Search','Classroom Theme'].includes(get(row, 'priority')) ? get(row, 'priority') : 'Core Even',
           worksheetTypes:    getArr(row, 'worksheettypes'),
           tagsPrimary:       getArr(row, 'tagsprimary'),
           tagsSecondary:     getArr(row, 'tagssecondary'),
