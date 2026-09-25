@@ -801,11 +801,40 @@ body {
     <div class="form-row">
       <div class="field"><label>Event Name *</label><input type="text" id="f-name" placeholder="เช่น Mother's Day"/></div>
       <div class="field">
-        <label>วันที่ในปีนี้ (DD-MM) *</label>
-        <input type="text" id="f-monthday" placeholder="เช่น 12-05 (12 พ.ค.)"/>
+        <label>Event Priority *</label>
+        <select id="f-priority" onchange="updateDateTypeUI()">
+          <option>Core Even</option><option>Popular Search</option><option>Classroom Theme</option>
+        </select>
       </div>
     </div>
     <div class="form-row">
+      <div class="field">
+        <label for="f-date-type">Date Type *</label>
+        <select id="f-date-type" onchange="updateDateTypeUI()">
+          <option value="day">วันเดียว</option>
+          <option value="month">ทั้งเดือน</option>
+          <option value="range">ช่วงวันที่</option>
+        </select>
+      </div>
+      <div class="field" id="date-fields-day">
+        <label for="f-date-day">วันที่ *</label>
+        <input type="date" id="f-date-day"/>
+      </div>
+      <div class="field hidden" id="date-fields-month">
+        <label for="f-date-month">เดือน *</label>
+        <input type="month" id="f-date-month"/>
+      </div>
+      <div class="field hidden" id="date-fields-range">
+        <label>วันที่เริ่ม – สิ้นสุด *</label>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <input type="date" id="f-date-start" aria-label="วันที่เริ่ม" style="min-width:0;flex:1;"/>
+          <span style="color:var(--text-3);">ถึง</span>
+          <input type="date" id="f-date-end" aria-label="วันที่สิ้นสุด" style="min-width:0;flex:1;"/>
+        </div>
+      </div>
+    </div>
+    <div id="date-help" style="font-size:12px;color:var(--text-3);margin:-6px 0 16px;"></div>
+    <div class="form-row s1">
       <div class="field">
         <label>Audience</label>
         <select id="f-audience">
@@ -813,14 +842,6 @@ body {
           <option>Pre-K / Kindergarten</option><option>Grade 1–2</option>
           <option>Grade 1–3</option><option>Grade 3–5</option>
           <option>Grade 4–6</option><option>Middle School</option><option>High School</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Event Priority</label>
-        <select id="f-priority">
-          <option>Core Even</option>
-          <option>Popular Search</option>
-          <option>Classroom Theme</option>
         </select>
       </div>
     </div>
@@ -883,18 +904,6 @@ body {
       </div>
     </div>
 
-
-    <!-- Event Priority -->
-    <div class="settings-card" style="grid-column:1/-1;">
-      <h3>⭐ Event Priority</h3>
-      <p class="desc">ระดับความสำคัญของ Event ใช้ช่วยแยก Event หลัก / Event ทดลอง / Event ที่เก็บไว้ดูย้อนหลัง</p>
-      <div id="master-priority-list" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;"></div>
-      <div style="display:flex;gap:8px;">
-        <input type="text" id="master-priority-input" placeholder="เช่น Main Event หรือ Trial Event" onkeydown="if(event.key==='Enter')addMasterPriority()"
-          style="flex:1;padding:11px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:14px;font-family:inherit;background:rgba(255,255,255,.4);"/>
-        <button class="btn primary sm" onclick="addMasterPriority()">+ เพิ่ม</button>
-      </div>
-    </div>
 
     <!-- Primary Tags -->
     <div class="settings-card">
@@ -1061,8 +1070,9 @@ body {
       <div style="margin-top:16px;background:var(--bg-2);border-radius:14px;padding:14px 16px;border:1px solid var(--border);">
         <div style="font-size:12px;font-weight:800;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">📋 รูปแบบ CSV ที่รองรับ</div>
         <div style="font-size:12px;color:var(--text-3);line-height:2;">
-          <b>คอลัมน์ที่ต้องมี:</b> <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">name</code> และ <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">date</code> (รูปแบบ DD-MM หรือ YYYY-MM-DD)<br/>
-          <b>คอลัมน์ optional:</b> audience, priority (Core Even / Popular Search / Classroom Theme), worksheetTypes (คั่นด้วย |), tagsPrimary (คั่นด้วย |), tagsSecondary (คั่นด้วย |), notes, existingProducts, insights<br/>
+          <b>คอลัมน์ที่ต้องมี:</b> <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">name</code>, <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">dateType</code>, <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">date</code> (วันใช้ DD-MM, เดือนใช้เลข 1–12)<br/>
+          <b>คอลัมน์ตามประเภท:</b> dateType ใช้ day, month หรือ range; ถ้าเป็น range ต้องกรอก endDate (DD-MM) · Core Even ใช้ day เท่านั้น<br/>
+          <b>คอลัมน์ optional:</b> audience, priority, worksheetTypes (คั่นด้วย |), tagsPrimary (คั่นด้วย |), tagsSecondary (คั่นด้วย |), notes, existingProducts, insights<br/>
           <b>เคล็ดลับ:</b> กด "ดาวน์โหลด Template CSV" เพื่อได้ไฟล์ที่กรอกได้เลยค่ะ
         </div>
       </div>
@@ -1102,7 +1112,6 @@ let master = JSON.parse(localStorage.getItem('tpt-v3-master') || 'null') || {
   worksheetTypes: ['Word Search','Reading','Coloring','Matching','Cut and Paste','Bingo','Craft','Writing Prompt','Math','Crossword'],
   tagsPrimary: [],
   tagsSecondary: [],
-  priorities: ['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'],
   templates: []
 };
 function normalizeSettings(value){
@@ -1111,10 +1120,10 @@ function normalizeSettings(value){
   return { tl:{...defaults.tl,...(source.tl && typeof source.tl==='object' ? source.tl : {})}, notif:{...defaults.notif,...(source.notif && typeof source.notif==='object' ? source.notif : {})} };
 }
 function normalizeMaster(value){
-  const defaults = { worksheetTypes:['Word Search','Reading','Coloring','Matching','Cut and Paste','Bingo','Craft','Writing Prompt','Math','Crossword'], tagsPrimary:[], tagsSecondary:[], priorities:['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'], templates:[] };
+  const defaults = { worksheetTypes:['Word Search','Reading','Coloring','Matching','Cut and Paste','Bingo','Craft','Writing Prompt','Math','Crossword'], tagsPrimary:[], tagsSecondary:[], templates:[] };
   const source = value && typeof value === 'object' ? value : {};
   const primary = Array.isArray(source.tagsPrimary) ? source.tagsPrimary : source.tags;
-  return { worksheetTypes:Array.isArray(source.worksheetTypes)?source.worksheetTypes:defaults.worksheetTypes, tagsPrimary:Array.isArray(primary)?primary:defaults.tagsPrimary, tagsSecondary:Array.isArray(source.tagsSecondary)?source.tagsSecondary:defaults.tagsSecondary, priorities:Array.isArray(source.priorities)?source.priorities:defaults.priorities, templates:Array.isArray(source.templates)?source.templates.filter(t=>t&&typeof t.name==='string'&&Array.isArray(t.tasks)):defaults.templates };
+  return { worksheetTypes:Array.isArray(source.worksheetTypes)?source.worksheetTypes:defaults.worksheetTypes, tagsPrimary:Array.isArray(primary)?primary:defaults.tagsPrimary, tagsSecondary:Array.isArray(source.tagsSecondary)?source.tagsSecondary:defaults.tagsSecondary, templates:Array.isArray(source.templates)?source.templates.filter(t=>t&&typeof t.name==='string'&&Array.isArray(t.tasks)):defaults.templates };
 }
 settings=normalizeSettings(settings);
 master=normalizeMaster(master);
@@ -1122,7 +1131,6 @@ master=normalizeMaster(master);
 if(master.tags && !master.tagsPrimary) master.tagsPrimary = master.tags;
 if(!master.tagsPrimary)   master.tagsPrimary   = [];
 if(!master.tagsSecondary) master.tagsSecondary = [];
-if(!master.priorities)    master.priorities    = ['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'];
 if(!master.templates)     master.templates     = [];
 delete master.tags;
 delete master.popularSearches;
@@ -1166,27 +1174,98 @@ function mmddToDdmm(mmdd){
   const [m,d] = mmdd.split('-');
   return `${d}-${m}`;
 }
-function thisYearDate(monthDay){
-  const y = new Date().getFullYear();
-  return `${y}-${monthDay}`;
+function updateDateTypeUI(){
+  const priorityEl = document.getElementById('f-priority');
+  const typeEl = document.getElementById('f-date-type');
+  if(!priorityEl || !typeEl) return;
+  const coreEvent = priorityEl.value === 'Core Even';
+  if(coreEvent) typeEl.value = 'day';
+  typeEl.disabled = coreEvent;
+  ['day','month','range'].forEach(type=>{
+    document.getElementById(`date-fields-${type}`).classList.toggle('hidden', typeEl.value !== type);
+  });
+  const help=document.getElementById('date-help');
+  if(help) help.textContent=coreEvent
+    ? 'Core Event ใช้วันเดียว และวันที่จะวนซ้ำทุกปี'
+    : typeEl.value==='month'
+      ? 'เดือนที่เลือกจะวนซ้ำทุกปี และ Timeline จะอิงวันแรกของเดือน'
+      : typeEl.value==='range'
+        ? 'ช่วงวันที่จะวนซ้ำทุกปี หากช่วงคร่อมปี ระบบจะต่อเนื่องไปยังปีถัดไป'
+        : 'วันที่จะวนซ้ำทุกปี โดยใช้เดือนและวันจากวันที่เลือก';
 }
-function nextOccurrence(monthDay){
-  if(!monthDay || !/^\d{2}-\d{2}$/.test(monthDay)){
-    // Return far-future date so app doesn't crash; event will sort to end
-    return new Date(9999,0,1);
+function normalizeEventPriority(value){
+  const current=['Core Even','Popular Search','Classroom Theme'];
+  if(current.includes(value)) return value;
+  const legacy={'⭐ Core Event':'Core Even','Core Event':'Core Even','🔥 High Search':'Popular Search','High Search':'Popular Search','🌱 Optional':'Classroom Theme','❄ Archive':'Classroom Theme'};
+  return legacy[value]||'Core Even';
+}
+function localISODate(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function parseISODate(value){
+  if(value instanceof Date) return new Date(value.getFullYear(),value.getMonth(),value.getDate());
+  const m = String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(m){
+    const d = new Date(+m[1],+m[2]-1,+m[3]);
+    return d.getFullYear()===+m[1] && d.getMonth()===+m[2]-1 && d.getDate()===+m[3] ? d : new Date(NaN);
   }
-  const today = new Date(); today.setHours(0,0,0,0);
-  const y = today.getFullYear();
-  let d = new Date(`${y}-${monthDay}`);
-  if(isNaN(d.getTime())) d = new Date(9999,0,1); // invalid combo (e.g. 02-30)
-  if(d < today) {
-    d = new Date(`${y+1}-${monthDay}`);
-    if(isNaN(d.getTime())) d = new Date(9999,0,1);
+  return new Date(value);
+}
+function validMonthDay(value){
+  if(!/^\d{2}-\d{2}$/.test(value||'')) return false;
+  const [m,d]=value.split('-').map(Number);
+  const check=new Date(2000,m-1,d);
+  return m>=1&&m<=12&&d>=1&&check.getMonth()===m-1&&check.getDate()===d;
+}
+function eventPeriod(ev, referenceDate=new Date()){
+  const today=new Date(referenceDate.getFullYear(),referenceDate.getMonth(),referenceDate.getDate());
+  const type=ev.dateType||'day';
+  const candidates=[];
+  for(let y=today.getFullYear()-1;y<=today.getFullYear()+8;y++){
+    let start,end;
+    if(type==='day'){
+      if(!validMonthDay(ev.monthDay)) continue;
+      const [m,d]=ev.monthDay.split('-').map(Number);
+      start=new Date(y,m-1,d); end=new Date(y,m-1,d);
+      if(start.getMonth()!==m-1||start.getDate()!==d) continue;
+    } else if(type==='month'){
+      const m=Number(ev.eventMonth);
+      if(!Number.isInteger(m)||m<1||m>12) continue;
+      start=new Date(y,m-1,1); end=new Date(y,m,0);
+    } else if(type==='range'){
+      if(!validMonthDay(ev.dateStart)||!validMonthDay(ev.dateEnd)) continue;
+      const [sm,sd]=ev.dateStart.split('-').map(Number);
+      const [em,ed]=ev.dateEnd.split('-').map(Number);
+      start=new Date(y,sm-1,sd);
+      const wraps=ev.dateEnd<ev.dateStart;
+      end=new Date(y+(wraps?1:0),em-1,ed);
+      if(start.getMonth()!==sm-1||start.getDate()!==sd||end.getMonth()!==em-1||end.getDate()!==ed) continue;
+    } else continue;
+    if(end>=today) candidates.push({start,end,active:start<=today&&today<=end});
   }
-  return d;
+  candidates.sort((a,b)=>a.start-b.start);
+  return candidates[0]||null;
+}
+function eventDateText(ev,period=eventPeriod(ev)){
+  if(!period) return '—';
+  const fmt=d=>d.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
+  if((ev.dateType||'day')==='month') return period.start.toLocaleDateString('th-TH',{month:'long',year:'numeric'});
+  if((ev.dateType||'day')==='range') return `${fmt(period.start)} – ${fmt(period.end)}`;
+  return fmt(period.start);
+}
+function eventSchedule(ev){
+  const period=eventPeriod(ev);
+  if(!period) return null;
+  const timeline=calcTL(localISODate(period.start));
+  return {period,timeline,days:period.active?0:daysUntil(period.start),phase:currentPhase(timeline,period.active)};
+}
+function eventTaskYear(ev,period=eventPeriod(ev)){
+  const currentYear=new Date().getFullYear();
+  return period&&(ev.dateType==='range')&&period.active&&period.start.getFullYear()<currentYear
+    ? period.start.getFullYear() : currentYear;
 }
 function calcTL(dateStr){
-  const d = new Date(dateStr);
+  const d = parseISODate(dateStr);
   if(isNaN(d.getTime())) {
     const fallback = new Date(9999,0,1);
     const fmt = dt => dt.toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'2-digit'});
@@ -1209,13 +1288,14 @@ function calcTL(dateStr){
 }
 function daysUntil(dateStr){
   const today=new Date();today.setHours(0,0,0,0);
-  const d=new Date(dateStr);
+  const d=parseISODate(dateStr);
   if(isNaN(d.getTime())) return 99999; // safe fallback
   d.setHours(0,0,0,0);
   return Math.round((d-today)/86400000);
 }
-function currentPhase(tl){
+function currentPhase(tl,activePeriod=false){
   const today=new Date();today.setHours(0,0,0,0);
+  if(activePeriod) return 'promoting';
   if(today>=tl.event)      return 'past';
   if(today>=tl.promoFrom)  return 'promoting';
   if(today>=tl.listFrom)   return 'listing';
@@ -1258,14 +1338,6 @@ function renderMaster(){
     </span>
   `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี — เพิ่มด้านล่างค่ะ</div>`;
 
-  // Event Priority
-  document.getElementById('master-priority-list').innerHTML = master.priorities.map((t,i)=>`
-    <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#EEF2FF;color:#4F46E5;border-radius:10px;font-size:13px;font-weight:700;border:1px solid #C7D2FE;">
-      ${escHtml(t)}
-      <button onclick="removeMasterPriority(${i})" style="border:none;background:none;cursor:pointer;color:#4F46E5;font-size:14px;padding:0 4px;font-weight:700;">×</button>
-    </span>
-  `).join('') || `<div style="font-size:12px;color:var(--text-3);">ยังไม่มี Priority — เพิ่มด้านล่างค่ะ</div>`;
-
   // Primary Tags
   document.getElementById('master-tag-primary-list').innerHTML = master.tagsPrimary.map((t,i)=>`
     <span style="display:inline-flex;align-items:center;gap:6px;padding:6px 10px 6px 14px;background:#FDF2F8;color:var(--rose);border-radius:10px;font-size:13px;font-weight:700;border:1px solid var(--rose-b);">
@@ -1299,15 +1371,6 @@ function renderMaster(){
   }
 }
 
-function addMasterPriority(){
-  const v = document.getElementById('master-priority-input').value.trim();
-  if(!v) return;
-  if(master.priorities.includes(v)){ alert('มี Priority นี้อยู่แล้วค่ะ'); return; }
-  master.priorities.push(v);
-  saveMaster();
-  document.getElementById('master-priority-input').value='';
-  renderMaster();
-}
 // Helper: count events that use a given master item
 function countEventUsage(field, value){
   return events.filter(e => {
@@ -1322,13 +1385,6 @@ function confirmDeleteMaster(itemName, field, value){
     ? `\n\n⚠️ มี ${used} event(s) ที่ใช้ "${itemName}" อยู่\n(ข้อมูลใน events เดิมจะยังคงอยู่ — แต่ถ้าแก้ event แล้ว save ใหม่ ค่านี้จะหาย เพราะไม่มี chip ให้เลือก)`
     : '';
   return confirm(`ลบ "${itemName}" ?${usageMsg}\n\nยืนยันลบ?`);
-}
-
-function removeMasterPriority(i){
-  const item = master.priorities[i];
-  if(!confirmDeleteMaster(item, 'priority', item)) return;
-  master.priorities.splice(i,1);
-  saveMaster(); renderMaster();
 }
 
 function addMasterWs(){
@@ -1419,9 +1475,8 @@ function taskStats(ev,year){
 
 function allTaskStats(){
   let total=0,done=0;
-  const y=new Date().getFullYear();
   events.forEach(ev=>{
-    const s=taskStats(ev,y);
+    const s=taskStats(ev,eventTaskYear(ev));
     total+=s.total; done+=s.done;
   });
   return{total,done};
@@ -1430,22 +1485,46 @@ function allTaskStats(){
 // ═══ SAVE/EDIT EVENTS ═══
 let editingId=null;
 
+function inputDateForMonthDay(monthDay,year=new Date().getFullYear()){
+  return validMonthDay(monthDay) ? `${year}-${monthDay}` : '';
+}
+function monthDayFromInput(value){
+  const m=String(value||'').match(/^\d{4}-(\d{2})-(\d{2})$/);
+  return m ? `${m[1]}-${m[2]}` : '';
+}
+
 function saveEvent(){
   const name=document.getElementById('f-name').value.trim();
-  const ddmm=document.getElementById('f-monthday').value.trim();
-  if(!name||!ddmm){alert('กรุณากรอกชื่อ Event และวันที่ (DD-MM) ค่ะ');return;}
-  if(!/^\d{2}-\d{2}$/.test(ddmm)){alert('รูปแบบวันที่ต้องเป็น DD-MM เช่น 12-05 ค่ะ');return;}
-  const [dd,mm] = ddmm.split('-').map(Number);
-  const parsedDate = new Date(2000, mm - 1, dd);
-  if(mm<1||mm>12||dd<1||parsedDate.getMonth()!==mm-1||parsedDate.getDate()!==dd){alert('วันที่ไม่ถูกต้องค่ะ กรุณาระบุวันที่ที่มีอยู่จริง (DD-MM)');return;}
-  const md = ddmmToMmdd(ddmm); // store as MM-DD internally
+  const priority=document.getElementById('f-priority').value;
+  const dateType=document.getElementById('f-date-type').value;
+  if(!name){alert('กรุณากรอกชื่อ Event ค่ะ');return;}
+  if(!['day','month','range'].includes(dateType)){alert('กรุณาเลือกรูปแบบวันที่ค่ะ');return;}
+  if(priority==='Core Even'&&dateType!=='day'){alert('Core Even ต้องระบุเป็นวันเดียวค่ะ');return;}
+  const dateFields={dateType,monthDay:'',eventMonth:'',dateStart:'',dateEnd:''};
+  if(dateType==='day'){
+    dateFields.monthDay=monthDayFromInput(document.getElementById('f-date-day').value);
+    if(!dateFields.monthDay||!validMonthDay(dateFields.monthDay)){alert('กรุณาระบุวันที่ที่ถูกต้องค่ะ');return;}
+  } else if(dateType==='month'){
+    const monthValue=document.getElementById('f-date-month').value;
+    const match=monthValue.match(/^\d{4}-(\d{2})$/);
+    if(!match||+match[1]<1||+match[1]>12){alert('กรุณาเลือกเดือนค่ะ');return;}
+    dateFields.eventMonth=match[1];
+  } else if(dateType==='range'){
+    const startValue=document.getElementById('f-date-start').value;
+    const endValue=document.getElementById('f-date-end').value;
+    const startDate=parseISODate(startValue), endDate=parseISODate(endValue);
+    if(!startValue||!endValue||isNaN(startDate.getTime())||isNaN(endDate.getTime())){alert('กรุณาระบุวันที่เริ่มและวันที่สิ้นสุดค่ะ');return;}
+    if(endDate<startDate){alert('วันที่สิ้นสุดต้องไม่อยู่ก่อนวันที่เริ่มค่ะ');return;}
+    if((endDate-startDate)/86400000>366){alert('ช่วงวันที่ต้องไม่ยาวเกิน 1 ปี เพราะ Event จะวนซ้ำทุกปีค่ะ');return;}
+    dateFields.dateStart=monthDayFromInput(startValue);
+    dateFields.dateEnd=monthDayFromInput(endValue);
+  }
   const existing=editingId?events.find(e=>e.id===editingId):null;
   const ev={
     id: editingId||Date.now().toString(),
-    name, monthDay:md,
+    name, ...dateFields,
     audience: document.getElementById('f-audience').value,
-    priority: document.getElementById('f-priority').value,
-    keywords: existing?.keywords || '',
+    priority,
     existingProducts: document.getElementById('f-existing-products')?.value.trim() || '',
     insights: document.getElementById('f-insights')?.value.trim() || '',
     worksheetTypes: getChips('ws-chips'),
@@ -1462,9 +1541,11 @@ function saveEvent(){
 
 function resetForm(){
   editingId=null;
-  ['f-name','f-monthday','f-existing-products','f-insights','f-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-name','f-date-day','f-date-month','f-date-start','f-date-end','f-existing-products','f-insights','f-notes'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
   document.getElementById('f-audience').value='';
   document.getElementById('f-priority').value='Core Even';
+  document.getElementById('f-date-type').value='day';
+  updateDateTypeUI();
   renderFormChips();
   document.getElementById('save-btn').textContent='💾 บันทึก';
 }
@@ -1474,9 +1555,19 @@ function startEdit(id){
   editingId=id;
   renderFormChips();
   document.getElementById('f-name').value=e.name;
-  document.getElementById('f-monthday').value=mmddToDdmm(e.monthDay)||'';
   document.getElementById('f-audience').value=e.audience||'';
-  document.getElementById('f-priority').value=['Core Even','Popular Search','Classroom Theme'].includes(e.priority) ? e.priority : 'Core Even';
+  document.getElementById('f-priority').value=normalizeEventPriority(e.priority);
+  const dateType=['day','month','range'].includes(e.dateType) ? e.dateType : 'day';
+  document.getElementById('f-date-type').value=dateType;
+  const year=new Date().getFullYear();
+  if(dateType==='day') document.getElementById('f-date-day').value=inputDateForMonthDay(e.monthDay,year);
+  if(dateType==='month') document.getElementById('f-date-month').value=`${year}-${String(e.eventMonth||'').padStart(2,'0')}`;
+  if(dateType==='range'){
+    const wraps=(e.dateEnd||'')<(e.dateStart||'');
+    document.getElementById('f-date-start').value=inputDateForMonthDay(e.dateStart,year);
+    document.getElementById('f-date-end').value=inputDateForMonthDay(e.dateEnd,year+(wraps?1:0));
+  }
+  updateDateTypeUI();
   const epEl = document.getElementById('f-existing-products'); if(epEl) epEl.value = e.existingProducts || '';
   const inEl = document.getElementById('f-insights'); if(inEl) inEl.value = e.insights || '';
   document.getElementById('f-notes').value=e.notes||'';
@@ -1505,6 +1596,8 @@ let activeYear=null;
 function openDetail(id){
   detailEventId=id;
   const ev=events.find(e=>e.id===id);if(!ev)return;
+  const schedule=eventSchedule(ev);
+  if(!schedule) return;
 
   // hide pages, show detail
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
@@ -1513,15 +1606,15 @@ function openDetail(id){
   det.classList.add('active');
 
   document.getElementById('det-name').textContent=ev.name;
-  const nextDate=nextOccurrence(ev.monthDay);
-  const tl=calcTL(nextDate.toISOString().split('T')[0]);
-  const days=daysUntil(nextDate.toISOString().split('T')[0]);
-  const daysText=days===0?'วันนี้!':days>0?`อีก ${days} วัน`:`ผ่านมา ${Math.abs(days)} วัน`;
-  document.getElementById('det-meta').textContent=`${ev.audience||'General'} · ${ev.priority||'Core Even'} · ถัดไป: ${tl.eventFmt} (${daysText})`;
+  const {period,timeline:tl,days}=schedule;
+  activeYear=eventTaskYear(ev,period);
+  const daysText=period.active?'กำลังดำเนินอยู่':days===0?'วันนี้!':`อีก ${days} วัน`;
+  const displayPriority=normalizeEventPriority(ev.priority);
+  document.getElementById('det-meta').textContent=`${ev.audience||'General'} · ${displayPriority} · ${eventDateText(ev,period)} (${daysText})`;
 
   // Tags row
   const tagsRow = document.getElementById('det-tags-row');
-  const prHtml = ev.priority ? `<span style="padding:4px 11px;background:var(--primary-bg);color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(ev.priority)}</span>` : '';
+  const prHtml = `<span style="padding:4px 11px;background:var(--primary-bg);color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(displayPriority)}</span>`;
   const wsHtml = (ev.worksheetTypes||[]).map(t=>`<span style="padding:4px 11px;background:#F5F7FF;color:var(--primary);border-radius:8px;font-size:11px;font-weight:700;">📝 ${escHtml(t)}</span>`).join('');
   const tpHtml = (ev.tagsPrimary || ev.tags || []).map(t=>`<span style="padding:4px 11px;background:#FDF2F8;color:var(--rose);border-radius:8px;font-size:11px;font-weight:700;">🔑 ${escHtml(t)}</span>`).join('');
   const tsHtml = (ev.tagsSecondary || []).map(t=>`<span style="padding:4px 11px;background:#FFF7ED;color:var(--amber);border-radius:8px;font-size:11px;font-weight:700;">${escHtml(t)}</span>`).join('');
@@ -1567,6 +1660,7 @@ function renderYearTabs(ev){
   const years=Object.keys(ev.years||{}).map(Number);
   if(!years.includes(today)) years.push(today);
   if(!years.includes(today+1)) years.push(today+1);
+  if(activeYear&&!years.includes(activeYear)) years.push(activeYear);
   years.sort((a,b)=>a-b);
 
   if(!activeYear||!years.includes(activeYear)) activeYear=today;
@@ -1786,88 +1880,66 @@ function deleteFile(idx){
 
 // ═══ RENDER DASHBOARD ═══
 function renderDashboard(){
-  const today=new Date();today.setHours(0,0,0,0);
-  const year=today.getFullYear();
-
-  // Today widget
   renderTodayWidget();
-
-  // Stats
   const ts=allTaskStats();
-  const upcoming=events.filter(e=>{
-    const d=nextOccurrence(e.monthDay);
-    return daysUntil(d.toISOString().split('T')[0])>=0;
-  }).length;
+  const schedules=events.map(ev=>({ev,schedule:eventSchedule(ev)})).filter(x=>x.schedule);
   document.getElementById('s-events').textContent=events.length;
-  document.getElementById('s-upcoming').textContent=upcoming;
+  document.getElementById('s-upcoming').textContent=schedules.length;
   document.getElementById('s-tasks').textContent=ts.done;
   document.getElementById('s-pct').textContent=ts.total?Math.round(ts.done/ts.total*100)+'%':'—';
 
-  // Banners
   const urgentThresh=settings.notif.urgent;
   const warnThresh  =settings.notif.warn;
-
-  const sortedByDate=events.map(ev=>{
-    const nd=nextOccurrence(ev.monthDay);
-    return{ev,days:daysUntil(nd.toISOString().split('T')[0]),nextDate:nd};
-  }).filter(x=>x.days>=0).sort((a,b)=>a.days-b.days);
-
-  const urgentList=sortedByDate.filter(x=>x.days<=urgentThresh);
-  const warnList  =sortedByDate.filter(x=>x.days>urgentThresh&&x.days<=warnThresh);
+  schedules.sort((a,b)=>a.schedule.days-b.schedule.days);
+  const urgentList=schedules.filter(x=>x.schedule.days<=urgentThresh);
+  const warnList=schedules.filter(x=>x.schedule.days>urgentThresh&&x.schedule.days<=warnThresh);
 
   const bu=document.getElementById('b-urgent');
   const bw=document.getElementById('b-warn');
 
   if(settings.notif.showUrgent&&urgentList.length){
     bu.classList.remove('hidden');
-    document.getElementById('bl-urgent').innerHTML=urgentList.map(x=>{
-      const tl=calcTL(x.nextDate.toISOString().split('T')[0]);
-      const ph=currentPhase(tl);
-      return`<div class="ban-item" onclick="openDetail('${x.ev.id}')">
-        <div><div class="ban-name">📌 ${x.ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[ph]} · ${tl.eventFmt}</div></div>
-        <div style="font-size:13px;font-weight:700;color:var(--red);">อีก ${x.days} วัน</div>
+    document.getElementById('bl-urgent').innerHTML=urgentList.map(({ev,schedule})=>{
+      const {period,timeline:tl,phase,days}=schedule;
+      return`<div class="ban-item" onclick="openDetail('${ev.id}')">
+        <div><div class="ban-name">📌 ${ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[phase]} · ${eventDateText(ev,period)}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--red);">${period.active?'กำลังดำเนินอยู่':days===0?'วันนี้!':`อีก ${days} วัน`}</div>
       </div>`;
     }).join('');
   } else bu.classList.add('hidden');
 
   if(settings.notif.showWarn&&warnList.length){
     bw.classList.remove('hidden');
-    document.getElementById('bl-warn').innerHTML=warnList.map(x=>{
-      const tl=calcTL(x.nextDate.toISOString().split('T')[0]);
-      const ph=currentPhase(tl);
-      return`<div class="ban-item" onclick="openDetail('${x.ev.id}')">
-        <div><div class="ban-name">📌 ${x.ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[ph]} · ${tl.eventFmt}</div></div>
-        <div style="font-size:13px;font-weight:700;color:var(--amber);">อีก ${x.days} วัน</div>
+    document.getElementById('bl-warn').innerHTML=warnList.map(({ev,schedule})=>{
+      const {period,timeline:tl,phase,days}=schedule;
+      return`<div class="ban-item" onclick="openDetail('${ev.id}')">
+        <div><div class="ban-name">📌 ${ev.name}</div><div class="ban-sub">Phase ตอนนี้: ${phaseName[phase]} · ${eventDateText(ev,period)}</div></div>
+        <div style="font-size:13px;font-weight:700;color:var(--amber);">${period.active?'กำลังดำเนินอยู่':days===0?'วันนี้!':`อีก ${days} วัน`}</div>
       </div>`;
     }).join('');
   } else bw.classList.add('hidden');
 
-  // Main list
   const dl=document.getElementById('dash-list');
   if(!events.length){
     dl.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>ยังไม่มี event — กด ➕ เพิ่มค่ะ</p></div>`;
     return;
   }
 
-  dl.innerHTML=sortedByDate.concat(
-    events.map(ev=>{const nd=nextOccurrence(ev.monthDay);return{ev,days:daysUntil(nd.toISOString().split('T')[0]),nextDate:nd};})
-      .filter(x=>x.days<0).sort((a,b)=>b.days-a.days)
-  ).map(({ev,days,nextDate})=>{
-    const dateStr=nextDate.toISOString().split('T')[0];
-    const tl=calcTL(dateStr);
-    const ph=currentPhase(tl);
-    const dc=days<0?'past':days<=urgentThresh?'urgent':days<=warnThresh?'soon':'ok';
-    const dt=days<0?`ผ่านมา ${Math.abs(days)} วัน`:days===0?'วันนี้!':`อีก ${days} วัน`;
+  dl.innerHTML=schedules.map(({ev,schedule})=>{
+    const {period,timeline:tl,phase:ph,days}=schedule;
+    const dc=period.active?'soon':days<=urgentThresh?'urgent':days<=warnThresh?'soon':'ok';
+    const dt=period.active?'กำลังดำเนินอยู่':days===0?'วันนี้!':`อีก ${days} วัน`;
     const phIdx=phaseIdx[ph]||0;
     const segs=['upcoming','creating','listing','promoting','past'].map((_,i)=>
       `<div class="phase-seg ${i<phIdx?'done-seg':i===phIdx?'active':''}"></div>`).join('');
-    const ts=taskStats(ev,new Date().getFullYear());
-    const tsHtml=ts.total?`<div class="task-summary"><span>${ts.done}/${ts.total}</span> งานสำเร็จปีนี้</div>`:'';
+    const taskYear=eventTaskYear(ev,period);
+    const ts=taskStats(ev,taskYear);
+    const tsHtml=ts.total?`<div class="task-summary"><span>${ts.done}/${ts.total}</span> งานสำเร็จปี ${taskYear}</div>`:'';
 
     return`<div class="upcoming-card" onclick="openDetail('${ev.id}')">
       <div>
         <div class="uc-name">${ev.name}</div>
-        <div class="uc-meta">${ev.audience||'General'} · ${ev.priority||'Core Even'} · ${tl.eventFmt}</div>
+        <div class="uc-meta">${ev.audience||'General'} · ${normalizeEventPriority(ev.priority)} · ${eventDateText(ev,period)}</div>
         <div class="uc-phases">
           <span class="pc ${ph}">${phaseName[ph]}</span>
           <span class="pc info">สร้าง: ${tl.startFmt}</span>
@@ -1888,11 +1960,10 @@ function renderDashboard(){
 // ═══ RENDER EVENTS LIST ═══
 function renderEventsList(){
   const q=(document.getElementById('ev-search')?.value||'').toLowerCase();
-  const filtered=events.filter(e=>!q||e.name.toLowerCase().includes(q)||(e.keywords||'').toLowerCase().includes(q))
+  const filtered=events.filter(e=>!q||e.name.toLowerCase().includes(q))
     .sort((a,b)=>{
-      const da=nextOccurrence(a.monthDay);
-      const db=nextOccurrence(b.monthDay);
-      return da-db;
+      const da=eventPeriod(a), db=eventPeriod(b);
+      return (da?.start||new Date(9999,0,1))-(db?.start||new Date(9999,0,1));
     });
 
   const el=document.getElementById('events-list');
@@ -1904,13 +1975,12 @@ function renderEventsList(){
   const accents=['#F5C6D7','#C5C0F0','#9FE0C8','#FAC775','#AFA9EC'];
 
   el.innerHTML=filtered.map((ev,i)=>{
-    const nd=nextOccurrence(ev.monthDay);
-    const dateStr=nd.toISOString().split('T')[0];
-    const tl=calcTL(dateStr);
-    const days=daysUntil(dateStr);
-    const dc=days<0?'past':days<=settings.notif.urgent?'urgent':days<=settings.notif.warn?'soon':'ok';
-    const dt=days<0?`ผ่านมา ${Math.abs(days)} วัน`:days===0?'วันนี้!':`อีก ${days} วัน`;
-    const ts=taskStats(ev,new Date().getFullYear());
+    const schedule=eventSchedule(ev);
+    if(!schedule) return '';
+    const {period,days}=schedule;
+    const dc=period.active?'soon':days<=settings.notif.urgent?'urgent':days<=settings.notif.warn?'soon':'ok';
+    const dt=period.active?'กำลังดำเนินอยู่':days===0?'วันนี้!':`อีก ${days} วัน`;
+    const ts=taskStats(ev,eventTaskYear(ev,period));
     const pct=ts.total?Math.round(ts.done/ts.total*100):0;
     const yrs=Object.keys(ev.years||{}).length;
 
@@ -1919,7 +1989,7 @@ function renderEventsList(){
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
         <div>
           <div class="uc-name" style="font-size:17px;">${ev.name}</div>
-          <div class="uc-meta">${ev.audience||'General'} · ${ev.priority||'Core Even'} · ถัดไป ${tl.eventFmt} · <span class="days-badge ${dc}" style="font-size:11px;">${dt}</span></div>
+          <div class="uc-meta">${ev.audience||'General'} · ${normalizeEventPriority(ev.priority)} · ${eventDateText(ev,period)} · <span class="days-badge ${dc}" style="font-size:11px;">${dt}</span></div>
         </div>
         <div style="display:flex;gap:6px;">
           <button class="btn sm" onclick="openDetail('${ev.id}')">📋 จัดการ</button>
@@ -2205,16 +2275,19 @@ function importJSON(event){
 
 function exportCSV(){
   if(!events.length){alert('ยังไม่มีข้อมูลค่ะ');return;}
-  const rows=[['Event','Month-Day','Audience','Priority','Year','Tasks Done','Tasks Total','Notes']];
+  const rows=[['name','dateType','date','endDate','audience','priority','year','tasksDone','tasksTotal','notes']];
   events.forEach(ev=>{
+    const dateType=ev.dateType||'day';
+    const date=dateType==='month' ? String(ev.eventMonth||'') : dateType==='range' ? mmddToDdmm(ev.dateStart) : mmddToDdmm(ev.monthDay);
+    const endDate=dateType==='range' ? mmddToDdmm(ev.dateEnd) : '';
     const yrs=Object.keys(ev.years||{});
     if(!yrs.length){
-      rows.push([ev.name,ev.monthDay,ev.audience,ev.priority,'','','','']);
+      rows.push([ev.name,dateType,date,endDate,ev.audience,normalizeEventPriority(ev.priority),'','','','']);
     } else {
       yrs.forEach(y=>{
         const yd=ev.years[y];
         const done=yd.tasks.filter(t=>t.status==='complete').length;
-        rows.push([ev.name,ev.monthDay,ev.audience,ev.priority,y,done,yd.tasks.length,yd.notes||'']);
+        rows.push([ev.name,dateType,date,endDate,ev.audience,normalizeEventPriority(ev.priority),y,done,yd.tasks.length,yd.notes||'']);
       });
     }
   });
@@ -2235,7 +2308,9 @@ function downloadCSVTemplate(){
   // Headers with Thai description inline — no separate rows needed
   const headers = [
     'name (ชื่อ event)*',
-    'date (วันที่ DD-MM หรือ YYYY-MM-DD)*',
+    'dateType (day/month/range)*',
+    'date (day/range: DD-MM, month: 1-12)*',
+    'endDate (ใช้เมื่อ dateType=range)',
     'audience (กลุ่มผู้เรียน)',
     'priority',
     'worksheetTypes (คั่นด้วย |)',
@@ -2246,22 +2321,44 @@ function downloadCSVTemplate(){
     'insights (บทเรียนจากปีที่แล้ว)'
   ];
   const example1 = [
-    "Mother's Day","12-05","Grade 1–3","Core Even",
+    "Mother's Day","day","12-05","","Grade 1–3","Core Even",
     "Word Search|Coloring","Spring|Family","Cute",
     "ปีที่แล้วขายดี Word Search","Word Search v1 (2024)",
     "Cover สีชมพูอ่อน CTR ดีกว่าสีเข้ม"
   ];
   const example2 = [
-    "Halloween","31-10","Grade 3–5","Classroom Theme",
+    "Fall Classroom Theme","range","01-09","30-11","Grade 3–5","Classroom Theme",
     "Coloring|Craft|Bingo","Fall|Halloween","",
     "","","ปีนี้ควรเพิ่ม Craft set"
   ];
-  const rows = [ headers, example1, example2 ];
+  const example3 = [
+    "Back to School","month","08","","Grade 1–3","Popular Search",
+    "Word Search|Writing Prompt","School","",
+    "","",""
+  ];
+  const rows = [ headers, example1, example2, example3 ];
   const csv = rows.map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'}));
   a.download = 'tpt-planner-template.csv';
   a.click();
+}
+
+function csvDateToMonthDay(raw){
+  const value=String(raw||'').trim();
+  let month,day;
+  const ddmm=value.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
+  const iso=value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(ddmm){day=+ddmm[1];month=+ddmm[2];}
+  else if(iso){month=+iso[2];day=+iso[3];}
+  else return '';
+  const monthDay=`${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  return validMonthDay(monthDay)?monthDay:'';
+}
+function csvMonthValue(raw){
+  const m=String(raw||'').trim().match(/^(?:\d{4}-)?(\d{1,2})$/);
+  if(!m||+m[1]<1||+m[1]>12) return '';
+  return String(+m[1]).padStart(2,'0');
 }
 
 function importCSV(event){
@@ -2276,10 +2373,10 @@ function importCSV(event){
 
       // Strip Thai descriptions like "name (ชื่อ event)*" → "name"
       const headers = lines[0].map(h => h.trim().toLowerCase().replace(/\s*\(.*?\)\*?/g,'').trim());
-      const required = ['name','date'];
+      const required = ['name','dateType','date'];
       const missing = required.filter(r => !headers.includes(r));
       if(missing.length){
-        alert(`❌ ไม่พบคอลัมน์ที่จำเป็น: ${missing.join(', ')}\n\nกรุณาตรวจสอบว่ามีคอลัมน์ "name" และ "date" ในแถวแรกค่ะ`);
+        alert(`❌ ไม่พบคอลัมน์ที่จำเป็น: ${missing.join(', ')}\n\nกรุณาตรวจสอบว่ามีคอลัมน์ name, dateType และ date ในแถวแรกค่ะ`);
         return;
       }
 
@@ -2301,32 +2398,38 @@ function importCSV(event){
 
         if(!name){ errors.push(`แถว ${lineNum}: ไม่มีชื่อ event`); return; }
         if(!dateRaw){ errors.push(`แถว ${lineNum}: ไม่มีวันที่ (${name})`); return; }
+        const dateType=get(row,'datetype').toLowerCase();
+        if(!['day','month','range'].includes(dateType)){ errors.push(`แถว ${lineNum}: dateType ต้องเป็น day, month หรือ range (${name})`); return; }
+        const parsedPriority=get(row,'priority')||((dateType==='day')?'Core Even':'Classroom Theme');
+        if(!['Core Even','Popular Search','Classroom Theme'].includes(parsedPriority)){ errors.push(`แถว ${lineNum}: priority ไม่ถูกต้อง (${name})`); return; }
+        if(parsedPriority==='Core Even'&&dateType!=='day'){ errors.push(`แถว ${lineNum}: Core Even ต้องใช้ dateType=day (${name})`); return; }
 
-        // CSV dates use DD-MM; ISO dates use YYYY-MM-DD.
-        let monthDay = '';
-        let day, month;
-        const ddmm = dateRaw.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
-        const full = dateRaw.match(/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})$/);
-        if(ddmm){ day=parseInt(ddmm[1],10); month=parseInt(ddmm[2],10); }
-        else if(full){ month=parseInt(full[2],10); day=parseInt(full[3],10); }
-        else { errors.push(`แถว ${lineNum}: รูปแบบวันที่ไม่ถูกต้อง "${dateRaw}" (${name}) — ใช้ DD-MM เช่น 12-05 หรือ YYYY-MM-DD`); return; }
-        const parsedDate = new Date(2000, month - 1, day);
-        if(month<1||month>12||day<1||parsedDate.getMonth()!==month-1||parsedDate.getDate()!==day){ errors.push(`แถว ${lineNum}: วันที่ไม่มีอยู่จริง "${dateRaw}" (${name})`); return; }
-        monthDay = `${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+        const dateFields={dateType,monthDay:'',eventMonth:'',dateStart:'',dateEnd:''};
+        if(dateType==='day'){
+          dateFields.monthDay=csvDateToMonthDay(dateRaw);
+          if(!dateFields.monthDay){ errors.push(`แถว ${lineNum}: วันที่ไม่ถูกต้อง "${dateRaw}" (${name}) — ใช้ DD-MM เช่น 12-05`); return; }
+        } else if(dateType==='month'){
+          dateFields.eventMonth=csvMonthValue(dateRaw);
+          if(!dateFields.eventMonth){ errors.push(`แถว ${lineNum}: เดือนต้องเป็นเลข 1–12 (${name})`); return; }
+        } else {
+          dateFields.dateStart=csvDateToMonthDay(dateRaw);
+          dateFields.dateEnd=csvDateToMonthDay(get(row,'enddate'));
+          if(!dateFields.dateStart||!dateFields.dateEnd){ errors.push(`แถว ${lineNum}: ช่วงวันที่ต้องมีวันเริ่มและ endDate ในรูปแบบ DD-MM (${name})`); return; }
+        }
 
-        // Check for duplicate name+monthDay
-        const isDuplicate = events.some(e => e.name === name && e.monthDay === monthDay);
+        const dateKey=e=>`${e.dateType||'day'}|${e.monthDay||''}|${e.eventMonth||''}|${e.dateStart||''}|${e.dateEnd||''}`;
+        const isDuplicate = [...events,...newEvents].some(e => e.name === name && dateKey(e) === dateKey(dateFields));
         if(isDuplicate){
-          errors.push(`แถว ${lineNum}: "${name}" (${dateRaw}) มีอยู่ในระบบแล้ว — ข้ามไป`);
+          errors.push(`แถว ${lineNum}: "${name}" มีช่วงวันที่นี้อยู่ในระบบแล้ว — ข้ามไป`);
           return;
         }
 
         newEvents.push({
           id: Date.now().toString() + Math.random().toString(36).slice(2,6),
           name,
-          monthDay,
+          ...dateFields,
           audience:          get(row, 'audience'),
-          priority:          ['Core Even','Popular Search','Classroom Theme'].includes(get(row, 'priority')) ? get(row, 'priority') : 'Core Even',
+          priority:          parsedPriority,
           worksheetTypes:    getArr(row, 'worksheettypes'),
           tagsPrimary:       getArr(row, 'tagsprimary'),
           tagsSecondary:     getArr(row, 'tagssecondary'),
@@ -2345,7 +2448,7 @@ function importCSV(event){
 
       // Preview + confirm
       let msg = `📊 พบ ${newEvents.length} events ที่จะเพิ่มเข้าระบบ\n`;
-      msg += newEvents.slice(0,5).map(e=>`  • ${e.name} (${mmddToDdmm(e.monthDay)})`).join('\n');
+      msg += newEvents.slice(0,5).map(e=>`  • ${e.name} (${eventDateText(e,eventPeriod(e))})`).join('\n');
       if(newEvents.length > 5) msg += `\n  ...และอีก ${newEvents.length-5} events`;
       if(errors.length > 0) msg += `\n\n⚠️ ข้ามไป ${errors.length} แถว:\n${errors.slice(0,3).map(e=>`  ${e}`).join('\n')}${errors.length>3?`\n  ...และอีก ${errors.length-3} แถว`:''}`;
       msg += `\n\nยืนยัน import?`;
@@ -2418,7 +2521,6 @@ function saveRevenue(){
 // ═══ FEATURE 2: TODAY WIDGET ═══
 function renderTodayWidget(){
   const today = new Date(); today.setHours(0,0,0,0);
-  const year  = today.getFullYear();
 
   // date label
   const dateLabel = document.getElementById('today-date-label');
@@ -2430,17 +2532,14 @@ function renderTodayWidget(){
   // Collect incomplete tasks from events currently in an active phase
   const activeTasks = [];
   events.forEach(ev => {
-    if(!ev.monthDay) return;
-    const nd = nextOccurrence(ev.monthDay);
-    const dateStr = nd.toISOString().split('T')[0];
-    const tl  = calcTL(dateStr);
-    const phase = currentPhase(tl);
-    if(phase === 'past' || phase === 'upcoming') return; // only creating/listing/promoting
+    const schedule=eventSchedule(ev);
+    if(!schedule||schedule.phase==='upcoming'||schedule.phase==='past') return;
+    const {phase,days}=schedule;
 
-    const yd = getYearData(ev, year);
+    const yd = getYearData(ev, eventTaskYear(ev,schedule.period));
     yd.tasks.forEach((t,i) => {
       if(t.status === 'complete') return;
-      activeTasks.push({ ev, taskIdx: i, task: t, phase, days: daysUntil(dateStr) });
+      activeTasks.push({ ev, taskIdx: i, task: t, phase, days });
     });
   });
 
@@ -2513,6 +2612,7 @@ function applyTemplate(tmplIdx){
 loadSettingsUI();
 loadClientIdUI();
 renderFormChips();
+updateDateTypeUI();
 updateDriveBar(false);
 renderDashboard();
 </script>
