@@ -1067,7 +1067,7 @@ body {
       <div style="margin-top:16px;background:var(--bg-2);border-radius:14px;padding:14px 16px;border:1px solid var(--border);">
         <div style="font-size:12px;font-weight:800;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">📋 รูปแบบ CSV ที่รองรับ</div>
         <div style="font-size:12px;color:var(--text-3);line-height:2;">
-          <b>คอลัมน์ที่ต้องมี:</b> <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">name</code> และ <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">date</code> (รูปแบบ DD-MM)<br/>
+          <b>คอลัมน์ที่ต้องมี:</b> <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">name</code> และ <code style="background:#fff;padding:1px 6px;border-radius:5px;font-size:11px;">date</code> (รูปแบบ DD-MM หรือ YYYY-MM-DD)<br/>
           <b>คอลัมน์ optional:</b> audience, difficulty, priority, keywords, worksheetTypes (คั่นด้วย |), tagsPrimary (คั่นด้วย |), tagsSecondary (คั่นด้วย |), notes, existingProducts, insights<br/>
           <b>เคล็ดลับ:</b> กด "ดาวน์โหลด Template CSV" เพื่อได้ไฟล์ที่กรอกได้เลยค่ะ
         </div>
@@ -1111,6 +1111,19 @@ let master = JSON.parse(localStorage.getItem('tpt-v3-master') || 'null') || {
   priorities: ['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'],
   templates: []
 };
+function normalizeSettings(value){
+  const defaults = { tl:{start:30,listFrom:25,listTo:15,promoFrom:14}, notif:{urgent:7,warn:21,showUrgent:true,showWarn:true} };
+  const source = value && typeof value === 'object' ? value : {};
+  return { tl:{...defaults.tl,...(source.tl && typeof source.tl==='object' ? source.tl : {})}, notif:{...defaults.notif,...(source.notif && typeof source.notif==='object' ? source.notif : {})} };
+}
+function normalizeMaster(value){
+  const defaults = { worksheetTypes:['Word Search','Reading','Coloring','Matching','Cut and Paste','Bingo','Craft','Writing Prompt','Math','Crossword'], tagsPrimary:[], tagsSecondary:[], priorities:['⭐ Core Event','🔥 High Search','🌱 Optional','❄ Archive'], templates:[] };
+  const source = value && typeof value === 'object' ? value : {};
+  const primary = Array.isArray(source.tagsPrimary) ? source.tagsPrimary : source.tags;
+  return { worksheetTypes:Array.isArray(source.worksheetTypes)?source.worksheetTypes:defaults.worksheetTypes, tagsPrimary:Array.isArray(primary)?primary:defaults.tagsPrimary, tagsSecondary:Array.isArray(source.tagsSecondary)?source.tagsSecondary:defaults.tagsSecondary, priorities:Array.isArray(source.priorities)?source.priorities:defaults.priorities, templates:Array.isArray(source.templates)?source.templates.filter(t=>t&&typeof t.name==='string'&&Array.isArray(t.tasks)):defaults.templates };
+}
+settings=normalizeSettings(settings);
+master=normalizeMaster(master);
 // Migration
 if(master.tags && !master.tagsPrimary) master.tagsPrimary = master.tags;
 if(!master.tagsPrimary)   master.tagsPrimary   = [];
@@ -1433,7 +1446,8 @@ function saveEvent(){
   if(!name||!ddmm){alert('กรุณากรอกชื่อ Event และวันที่ (DD-MM) ค่ะ');return;}
   if(!/^\d{2}-\d{2}$/.test(ddmm)){alert('รูปแบบวันที่ต้องเป็น DD-MM เช่น 12-05 ค่ะ');return;}
   const [dd,mm] = ddmm.split('-').map(Number);
-  if(mm<1||mm>12||dd<1||dd>31){alert('วันที่ไม่ถูกต้องค่ะ (DD: 01-31, MM: 01-12)');return;}
+  const parsedDate = new Date(2000, mm - 1, dd);
+  if(mm<1||mm>12||dd<1||parsedDate.getMonth()!==mm-1||parsedDate.getDate()!==dd){alert('วันที่ไม่ถูกต้องค่ะ กรุณาระบุวันที่ที่มีอยู่จริง (DD-MM)');return;}
   const md = ddmmToMmdd(ddmm); // store as MM-DD internally
   const existing=editingId?events.find(e=>e.id===editingId):null;
   const ev={
@@ -2109,8 +2123,8 @@ async function driveLoad(){
     if(!confirm(`📥 โหลดจาก Drive?\n\n• ใน Drive: ${driveCount} events\n• ในเครื่องนี้: ${localCount} events\n• บันทึกล่าสุด: ${savedAt}${warnMsg}\n\nกด OK เพื่อแทนที่ข้อมูลในเครื่องด้วยข้อมูลจาก Drive`)) return;
 
     events = data.events;
-    if(data.settings){ settings = data.settings; localStorage.setItem('tpt-v3-settings', JSON.stringify(settings)); loadSettingsUI(); }
-    if(data.master){ master = data.master; saveMaster(); renderFormChips(); }
+    if(data.settings){ settings = normalizeSettings(data.settings); localStorage.setItem('tpt-v3-settings', JSON.stringify(settings)); loadSettingsUI(); }
+    if(data.master){ master = normalizeMaster(data.master); saveMaster(); renderFormChips(); }
     saveAll();
     showDriveToast(`📥 โหลด ${events.length} events จาก Drive แล้วค่ะ ✅`);
     renderDashboard();
@@ -2176,12 +2190,12 @@ function importJSON(event){
 
       events = data.events;
       if(data.settings) {
-        settings = data.settings;
+        settings = normalizeSettings(data.settings);
         localStorage.setItem('tpt-v3-settings', JSON.stringify(settings));
         loadSettingsUI();
       }
       if(data.master) {
-        master = data.master;
+        master = normalizeMaster(data.master);
         saveMaster();
         renderFormChips();
       }
@@ -2236,7 +2250,7 @@ function downloadCSVTemplate(){
   // Headers with Thai description inline — no separate rows needed
   const headers = [
     'name (ชื่อ event)*',
-    'date (วันที่ DD-MM)*',
+    'date (วันที่ DD-MM หรือ YYYY-MM-DD)*',
     'audience (กลุ่มผู้เรียน)',
     'difficulty (easy/medium/hard)',
     'priority',
@@ -2305,26 +2319,17 @@ function importCSV(event){
         if(!name){ errors.push(`แถว ${lineNum}: ไม่มีชื่อ event`); return; }
         if(!dateRaw){ errors.push(`แถว ${lineNum}: ไม่มีวันที่ (${name})`); return; }
 
-        // Accept DD-MM or MM-DD or YYYY-MM-DD
+        // CSV dates use DD-MM; ISO dates use YYYY-MM-DD.
         let monthDay = '';
+        let day, month;
         const ddmm = dateRaw.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
-        const full = dateRaw.match(/^\d{4}[\/\-](\d{2})[\/\-](\d{2})$/);
-        if(ddmm){
-          const d = ddmm[1].padStart(2,'0');
-          const m = ddmm[2].padStart(2,'0');
-          // Heuristic: if first num > 12 → must be day, so DD-MM
-          if(parseInt(ddmm[1]) > 12){
-            monthDay = `${m}-${d}`; // store as MM-DD
-          } else {
-            // Default treat as DD-MM per our convention
-            monthDay = `${m}-${d}`;
-          }
-        } else if(full){
-          monthDay = `${full[1]}-${full[2]}`;
-        } else {
-          errors.push(`แถว ${lineNum}: รูปแบบวันที่ไม่ถูกต้อง "${dateRaw}" (${name}) — ใช้ DD-MM เช่น 12-05`);
-          return;
-        }
+        const full = dateRaw.match(/^(\d{4})[\/\-](\d{2})[\/\-](\d{2})$/);
+        if(ddmm){ day=parseInt(ddmm[1],10); month=parseInt(ddmm[2],10); }
+        else if(full){ month=parseInt(full[2],10); day=parseInt(full[3],10); }
+        else { errors.push(`แถว ${lineNum}: รูปแบบวันที่ไม่ถูกต้อง "${dateRaw}" (${name}) — ใช้ DD-MM เช่น 12-05 หรือ YYYY-MM-DD`); return; }
+        const parsedDate = new Date(2000, month - 1, day);
+        if(month<1||month>12||day<1||parsedDate.getMonth()!==month-1||parsedDate.getDate()!==day){ errors.push(`แถว ${lineNum}: วันที่ไม่มีอยู่จริง "${dateRaw}" (${name})`); return; }
+        monthDay = `${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
 
         // Check for duplicate name+monthDay
         const isDuplicate = events.some(e => e.name === name && e.monthDay === monthDay);
